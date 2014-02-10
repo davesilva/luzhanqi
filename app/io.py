@@ -9,7 +9,7 @@ def send(msg):
      sys.stdout.write(serial)
      sys.stdout.flush()
 
-def recieve():
+def receive():
      packet = sys.stdin.readlines()
      msg = Message(packet)
      return msg
