@@ -22,7 +22,7 @@ class Config:
             quit()
 
         if (re.search("ms", options.time)):
-            self.time = int(match.group(1))
+            self.time = int(float(match.group(1)))
         else:
             self.time = int(1000 * float(match.group(1)))
 
