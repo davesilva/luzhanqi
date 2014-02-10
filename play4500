@@ -1,2 +1,5 @@
-#!/bin/sh
+#!/usr/bin/env python3
 
+from app.config import Config
+
+config = Config()
