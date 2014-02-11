@@ -3,7 +3,7 @@
 from app.config import Config
 import app.board_parser as board_parser
 import app.message as message
-
+import app.io as io
 
 # our first move, a tuple of tuples (from, to)
 FIRST_MOVE = ((2,1),(3,2))
@@ -16,12 +16,12 @@ def main():
     # Initial Message (i.e initial board)
     init_msg = message.InitMessage(init_board)
 
-    print(init_msg.serialize())
+    io.send(init_msg)
 
     # If we are going first, print the first move
     if config.turn == 1:
         mov_msg = message.MoveMessage(FIRST_MOVE[0], FIRST_MOVE[1])
-        print(mov_msg.serialize())
+        io.send(mov_msg)
 
     """
         Real Deal here
