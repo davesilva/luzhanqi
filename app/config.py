@@ -19,7 +19,7 @@ class Config:
 
         if (options.turn != "1" and options.turn != "2") or (not match):
             sys.stderr.write(parser.format_help())
-            quit()
+            quit(1)
 
         if (re.search("ms", options.time)):
             self.time = int(float(match.group(1)))
