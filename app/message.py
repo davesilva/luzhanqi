@@ -35,4 +35,5 @@ class MoveMessage(Message):
     def serialize(self):
         p = self.posfrom
         t = self.posto
-        return "( %c%d %c%d )"%(0x41 + p[0], p[1] + 1, 0x41 + t[0], t[1] + 1)
+        base_char = ord('A')
+        return "( %c%d %c%d )"%(base_char + p[0], p[1] + 1, base_char + t[0], t[1] + 1)
