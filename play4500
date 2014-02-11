@@ -21,7 +21,7 @@ def main():
     # If we are going first, print the first move
     if config.turn == 1:
         mov_msg = message.MoveMessage(FIRST_MOVE[0], FIRST_MOVE[1])
-        io(mov_msg)
+        io.send(mov_msg)
 
     """
         Real Deal here
