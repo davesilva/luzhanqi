@@ -1,6 +1,5 @@
-
 import sys
-import message
+import app.message as message
 
 
 
