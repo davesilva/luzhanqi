@@ -1,5 +1,4 @@
-
-import board
+import app.board as board
 
 
 # Message super class
