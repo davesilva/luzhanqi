@@ -31,6 +31,9 @@ class Board:
 		# Add list to piece
 		new_list.append(piece.move(dest))
 
+    def serialize(self):
+        return "( " + " ".join(map(lambda x: x.serialize(), peices_list)) + " )"
+
 
 class Piece:
 
@@ -51,7 +54,10 @@ class Piece:
 		return (self.rank == piece.rank & self.tuple == pice.tuple)
 
 
-
+    def serialize(self):
+        x = self.position[0]
+        y = self.position[1]
+        return "( %c%d %c )"%(ord('A') + x, y + 1, self.rank)
 
 
 
