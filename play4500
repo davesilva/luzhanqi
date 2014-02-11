@@ -1,5 +1,34 @@
 #!/usr/bin/env python3
 
 from app.config import Config
+import board_parser
+import message
 
-config = Config()
+
+# our first move, a tuple of tuples (from, to)
+FIRST_MOVE = (()())
+
+def main():
+    # Initial configuration
+    config = Config()
+    init_board = board_parser.parse_board()
+
+    # Initial Message (i.e initial board)
+    init_msg = message.InitMessage(init_board)
+
+    print(init_msg.serialize())
+
+    # If we are going first, print the first move
+    if config.turn == 1:
+        mov_msg = message.MoveMessage(FIRST_MOVE[0], FIRST_MOVE[1])
+        print(mov_msg.serialize())
+
+    """
+        Real Deal here
+    """
+
+
+   return 0
+
+if __name__ == "__main__":
+        main()
