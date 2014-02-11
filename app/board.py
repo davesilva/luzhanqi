@@ -32,7 +32,7 @@ class Board:
 		new_list.append(piece.move(dest))
 
     def serialize(self):
-        return "( " + " ".join(map(lambda x: x.serialize(), peices_list)) + " )"
+        return "( " + " ".join(map(lambda x: x.serialize(), self.pieces_list)) + " )"
 
 
 class Piece:
