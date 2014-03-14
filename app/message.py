@@ -25,7 +25,7 @@ RE_MAP ={
         }
 
 # String -> Tuple
-def posToTuple(pos):
+def pos_to_tuple(pos):
     return (ord(pos[0]) - ord('A'), int(pos[1:]) - 1)
 
 # returns an instance of the subclass
