@@ -26,7 +26,7 @@ RE_MAP ={
 
 # String -> Tuple
 def posToTuple(pos):
-    (ord(pos[0]) - ord('A'), int(pos[1:]))
+    return (ord(pos[0]) - ord('A'), int(pos[1:]) - 1)
 
 # returns an instance of the subclass 
 def deserialize(packet):
@@ -35,6 +35,14 @@ def deserialize(packet):
         if match:
            return RE_MAP[rx](match)
 
+    raise BadMessageException("Invalid Message from the Ref")
+
+# Bad message from the Ref Exception
+class BadMessageException(Exception):
+    def __init__(self, s):
+        self.value = s
+    def __str__(self):
+        return repr(self.value)
 
 # Message super class
 class Message(object):
@@ -68,7 +76,6 @@ class MoveMessage(Message):
         self.player = player
         self.movetype = movetype
 
-
     # -> String
     # returns a string representing the serialized board
     def serialize(self):
@@ -76,6 +83,9 @@ class MoveMessage(Message):
         t = self.posto
         base_char = ord('A')
         return "( %c%d %c%d )"%(base_char + p[0], p[1] + 1, base_char + t[0], t[1] + 1)
+
+    def __str__(self):
+        return "Move message: %s"%(self.serialize())
  
 
 class FlagMessage(Message):
@@ -83,16 +93,23 @@ class FlagMessage(Message):
     def __init__(self, pos):
         self.pos = pos
     
+    def __str__(self):
+        base_char = ord('A')
+        p = self.pos
+        return "Flag position: ( %c%d )"%(base_char + p[0], p[1] + 1)
 
 class WinningMessage(Message):
     # String -> Message
     def __init__(self, result):
         self.result = result
 
+    def __str__(self):
+        return "Player %s"%(result)
 
 class Error(Message):
     # String -> Message
     def __init__(self, error):
         self.error = error
 
-
+    def __str__(self):
+        return self.error
