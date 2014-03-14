@@ -114,6 +114,5 @@ class Error(Message):
     def __eq__(self, obj):
         self.error == obj.error
 
-
     def __str__(self):
         return self.error
