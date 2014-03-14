@@ -60,6 +60,8 @@ class Board:
     # Returns true if this space is blocked for the given player
     def is_space_blocked_by(self, position, owner):
         p = self.piece_at(position)
+        # TODO: if a player move into an opponent's headquarters,
+        # it may not move again
         if p is None:
             return False
         elif p.owner == owner:
