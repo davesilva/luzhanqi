@@ -10,7 +10,7 @@ def send(msg):
 
 def receive():
      packet = sys.stdin.readlines()
-     msg = Message(packet)
+     msg = deserialize(packet)
      return msg
 
      
