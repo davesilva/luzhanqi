@@ -28,6 +28,18 @@ class TestPiece(unittest.TestCase):
         p2 = Piece((0, 1), Owner.OPPONENT, Rank('1'))
         self.assertFalse(p1 == p2)
 
+    def test_is_stationary_with_stationary_pieces(self):
+        p = Piece((0, 0), Owner.PLAYER, Rank('F'))
+        self.assertTrue(p.is_stationary())
+        p = Piece((0, 0), Owner.PLAYER, {Rank('F'), Rank('L')})
+        self.assertTrue(p.is_stationary())
+
+    def test_is_stationary_with_non_stationary_pieces(self):
+        p = Piece((0, 0), Owner.PLAYER, Rank('1'))
+        self.assertFalse(p.is_stationary())
+        p = Piece((0, 0), Owner.PLAYER, {Rank('F'), Rank('4')})
+        self.assertFalse(p.is_stationary())
+
 
 class TestBoard(unittest.TestCase):
     def test_serialize_empty_board(self):
@@ -130,6 +142,14 @@ class TestBoard(unittest.TestCase):
                          expected_for_player)
         self.assertEqual(list(b.iterate_all_moves(Owner.OPPONENT)),
                          expected_for_opponent)
+
+    def test_iterate_all_moves_with_landmine_and_flag(self):
+        p1 = Piece((0, 0), Owner.PLAYER, Rank('L'))
+        p2 = Piece((0, 1), Owner.PLAYER, Rank('F'))
+        b = Board().place_piece(p1).place_piece(p2)
+
+        self.assertEqual(list(b.iterate_all_moves(Owner.PLAYER)), [])
+
 
 if __name__ == '__main__':
     unittest.main()

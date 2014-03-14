@@ -79,6 +79,9 @@ class Board:
     # Returns a generator which returns all possible moves that can be made
     # by that piece, where a move is a position that this piece can move to.
     def iterate_moves_for_piece(self, piece):
+        if piece.is_stationary():
+            return iter([])
+
         i = board_layout.iterate_adjacent(piece.position)
         # Make sure we exclude blocked spaces
         i = filter(lambda m: not self.is_space_blocked_by(m, piece.owner), i)
@@ -117,6 +120,11 @@ class Piece:
     # Position -> Piece
     def move(self, new_posn):
         return Piece(new_posn, self.owner, ranks=self.ranks)
+
+    # -> Boolean
+    # Returns true if the piece cannot be moved (it is a flag or landmine)
+    def is_stationary(self):
+        return len(self.ranks.difference({Rank('L'), Rank('F')})) == 0
 
     # Piece -> Boolean
     # Check if the given piece is the same as this instance
