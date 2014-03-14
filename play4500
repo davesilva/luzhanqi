@@ -34,8 +34,6 @@ def main():
             game_board = game_board.update(msg)
             if msg.player == config.turn:
                 continue
-            # delete following line when board.update is here
-            #game_board.move_piece(msg.posfrom, msg.posto)
             list_of_moves = game_board.iterate_all_moves(board.Owner.PLAYER)
             list_of_moves = list(list_of_moves)
             rand_idx = random.randint(0, len(list_of_moves))
