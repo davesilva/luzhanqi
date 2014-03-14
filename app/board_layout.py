@@ -20,11 +20,22 @@ class Space:
         self.adjacent.add(v)
 
 
+# Position Position -> Boolean
 def is_adjacent(v1, v2):
     return (v2 in _board_graph[v1])
 
 
-def all_adjacent(position):
+# Position -> Boolean
+def is_camp(p):
+    return _board_graph[p].space_type == Space.CAMP
+
+
+# Position -> Boolean
+def is_headquarters(p):
+    return _board_graph[p].space_type == Space.HEADQUARTERS
+
+
+def iterate_adjacent(position):
     return iter(_board_graph[position])
 
 

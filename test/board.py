@@ -11,7 +11,7 @@ class TestRank(unittest.TestCase):
 
 class TestPiece(unittest.TestCase):
     def test_create_rank_with_set(self):
-        p = Piece((0, 0), Owner.PLAYER, set([Rank('1')]))
+        p = Piece((0, 0), Owner.PLAYER, frozenset([Rank('1')]))
         self.assertEqual(p.serialize(), "( A1 1 )")
 
     def test_create_rank_with_one_rank(self):
@@ -52,6 +52,77 @@ class TestBoard(unittest.TestCase):
         b = Board().place_piece(p).move_piece((0, 0), (0, 1))
         self.assertTrue(isinstance(b.piece_at((0, 1)), Piece))
         self.assertEqual(b.piece_at((0, 0)), None)
+
+    def test_is_space_blocked_by(self):
+        p = Piece((0, 0), Owner.PLAYER, Rank('1'))
+        b = Board().place_piece(p)
+        self.assertTrue(b.is_space_blocked_by((0, 0), Owner.PLAYER))
+        self.assertFalse(b.is_space_blocked_by((0, 0), Owner.OPPONENT))
+        self.assertFalse(b.is_space_blocked_by((0, 1), Owner.PLAYER))
+        self.assertFalse(b.is_space_blocked_by((0, 1), Owner.OPPONENT))
+
+    def test_iterate_pieces_with_one_piece(self):
+        p1 = Piece((0, 0), Owner.PLAYER, Rank('8'))
+        b = Board().place_piece(p1)
+        self.assertEqual(len(list(b.iterate_pieces(Owner.PLAYER))), 1)
+        self.assertEqual(len(list(b.iterate_pieces(Owner.OPPONENT))), 0)
+
+    def test_iterate_pieces_with_more_pieces(self):
+        p1 = Piece((0, 0), Owner.PLAYER, Rank('8'))
+        p2 = Piece((0, 1), Owner.PLAYER, Rank('2'))
+        b = Board().place_piece(p1).place_piece(p2)
+        self.assertEqual(len(list(b.iterate_pieces(Owner.PLAYER))), 2)
+        self.assertEqual(len(list(b.iterate_pieces(Owner.OPPONENT))), 0)
+
+    def test_iterate_pieces_with_opponent_pieces(self):
+        p1 = Piece((0, 0), Owner.PLAYER, Rank('8'))
+        p2 = Piece((0, 1), Owner.PLAYER, Rank('2'))
+        p3 = Piece((1, 1), Owner.OPPONENT, Rank('2'))
+        b = Board().place_piece(p1).place_piece(p2).place_piece(p3)
+        self.assertEqual(len(list(b.iterate_pieces(Owner.PLAYER))), 2)
+        self.assertEqual(len(list(b.iterate_pieces(Owner.OPPONENT))), 1)
+
+    def test_iterate_moves_for_piece_simple(self):
+        p = Piece((0, 0), Owner.PLAYER, Rank('8'))
+        b = Board().place_piece(p)
+        self.assertEqual(list(b.iterate_moves_for_piece(p)), [(0, 1), (1, 0)])
+
+    def test_iterate_moves_for_piece_forbids_moving_onto_blocked_spaces(self):
+        p1 = Piece((0, 0), Owner.PLAYER, Rank('8'))
+        p2 = Piece((0, 1), Owner.PLAYER, Rank('4'))
+        b = Board().place_piece(p1).place_piece(p2)
+        self.assertEqual(list(b.iterate_moves_for_piece(p1)), [(1, 0)])
+
+    def test_iterate_moves_for_piece_forbids_attacking_in_camp(self):
+        p1 = Piece((0, 1), Owner.PLAYER, Rank('8'))
+        p2 = Piece((1, 2), Owner.OPPONENT, Rank('4'))
+        b = Board().place_piece(p1).place_piece(p2)
+        self.assertEqual(len(list(b.iterate_moves_for_piece(p1))), 3)
+        self.assertFalse((1, 2) in list(b.iterate_moves_for_piece(p1)))
+        self.assertTrue((0, 1) in list(b.iterate_moves_for_piece(p2)))
+
+    def test_iterate_all_moves_with_one_piece(self):
+        p = Piece((0, 0), Owner.PLAYER, Rank('8'))
+        b = Board().place_piece(p)
+        self.assertEqual(list(b.iterate_all_moves(Owner.PLAYER)),
+                         list(b.iterate_moves_for_piece(p)))
+
+    def test_iterate_all_moves_with_multiple_pieces(self):
+        p1 = Piece((0, 0), Owner.PLAYER, Rank('8'))
+        p2 = Piece((0, 1), Owner.PLAYER, Rank('4'))
+        b = Board().place_piece(p1).place_piece(p2)
+        self.assertEqual(list(b.iterate_all_moves(Owner.PLAYER)),
+                         list(b.iterate_moves_for_piece(p1)) +
+                         list(b.iterate_moves_for_piece(p2)))
+
+    def test_iterate_all_moves_with_both_players(self):
+        p1 = Piece((0, 0), Owner.PLAYER, Rank('8'))
+        p2 = Piece((0, 1), Owner.OPPONENT, Rank('4'))
+        b = Board().place_piece(p1).place_piece(p2)
+        self.assertEqual(list(b.iterate_all_moves(Owner.PLAYER)),
+                         list(b.iterate_moves_for_piece(p1)))
+        self.assertEqual(list(b.iterate_all_moves(Owner.OPPONENT)),
+                         list(b.iterate_moves_for_piece(p2)))
 
 if __name__ == '__main__':
     unittest.main()

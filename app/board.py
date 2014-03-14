@@ -1,5 +1,7 @@
 # A Position is a tuple of Numbers (row, column)
 import copy
+import itertools
+import app.board_layout as board_layout
 
 
 class Rank:
@@ -55,6 +57,32 @@ class Board:
         return next(
             (p for p in self.pieces_list if p.position == position), None)
 
+    # Position Owner -> Boolean
+    # Returns true if this space is blocked for the given player
+    def is_space_blocked_by(self, position, owner):
+        p = self.piece_at(position)
+        if p is None:
+            return False
+        elif p.owner == owner:
+            return True
+        else:
+            return board_layout.is_camp(position)
+
+    def iterate_pieces(self, owner):
+        i = iter(self.pieces_list)
+        return filter(lambda p: p.owner == owner, i)
+
+    def iterate_moves_for_piece(self, piece):
+        i = board_layout.iterate_adjacent(piece.position)
+        # Make sure we exclude blocked spaces
+        i = filter(lambda m: not self.is_space_blocked_by(m, piece.owner), i)
+        return i
+
+    def iterate_all_moves(self, owner):
+        for piece in self.iterate_pieces(owner):
+            for move in self.iterate_moves_for_piece(piece):
+                yield move
+
     def serialize(self):
         return ("( " +
                 " ".join([p.serialize() for p in self.pieces_list]) + " )")
@@ -62,7 +90,7 @@ class Board:
 
 class Piece:
     RANK_NAMES = [str(i) for i in range(1, 10)] + ['B', 'L', 'F']
-    ALL_RANKS = set([Rank(i) for i in RANK_NAMES])
+    ALL_RANKS = frozenset([Rank(i) for i in RANK_NAMES])
 
     # Position Owner <ranks=Set(Rank)> -> Piece
     def __init__(self, position, owner, ranks=ALL_RANKS):
@@ -72,7 +100,7 @@ class Piece:
         self.owner = owner
         # Set of all possible ranks
         if isinstance(ranks, Rank):
-            self.ranks = set([ranks])
+            self.ranks = frozenset([ranks])
         else:
             self.ranks = ranks
 
