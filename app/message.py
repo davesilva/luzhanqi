@@ -14,8 +14,8 @@ FLAG_RE = "F %s" % (POSITION_RE)
 WINNING_RE = "([1|2|No]) Victory"
 
 RE_MAP ={
-            INVALID_SETUP_RE: (lambda match: Error(match.group(1))),
-            INVALID_MOVE_RE: (lambda match: Error(match.group(2))),
+            INVALID_SETUP_RE: (lambda match: ErrorMessage(match.group(1))),
+            INVALID_MOVE_RE: (lambda match: ErrorMessage(match.group(2))),
             RCV_MOVE_RE: (lambda match: MoveMessage(pos_to_tuple(match.group(1)), \
                                                     pos_to_tuple(match.group(2)), \
                                                     match.group(3), \
@@ -112,7 +112,7 @@ class ErrorMessage(Message):
         self.error = error
 
     def __eq__(self, obj):
-        self.error == obj.error
+        return self.error == obj.error
 
     def __str__(self):
         return self.error
