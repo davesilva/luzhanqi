@@ -8,10 +8,10 @@ IM_FT_INVALID_RE = "From To Invalid"
 IM_LOC_INVALID_RE = "Location Invalid"
 INVALID_MOVE_RE = "(Invalid Board Move) (%s|%s|%s|%s)$" % (IM_PIECE_MOVE_RE, IM_NO_PIECE_RE, IM_FT_INVALID_RE, IM_LOC_INVALID_RE)
 POSITION_RE = "([A-E]1[0-2]|[A-E][1-9])"
-PLAYER_RE = "([1|2])"
+PLAYER_RE = "(1|2)"
 RCV_MOVE_RE = "%s %s %s (move|win|loss|tie)$" % (POSITION_RE, POSITION_RE, PLAYER_RE)
 FLAG_RE = "F %s$" % (POSITION_RE)
-WINNING_RE = "([1|2]|No) Victory$"
+WINNING_RE = "(1|2|No) Victory$"
 
 
 RE_MAP ={
