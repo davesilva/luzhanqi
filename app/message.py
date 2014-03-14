@@ -13,14 +13,20 @@ RCV_MOVE_RE = "%s %s %s (move|win|loss|tie)$" % (POSITION_RE, POSITION_RE, PLAYE
 FLAG_RE = "F %s" % (POSITION_RE)
 WINNING_RE = "([1|2|No]) Victory"
 
-RE_MAP = 
-        {
+RE_MAP ={
             INVALID_SETUP_RE: (lambda match: Error(match.group(1))),
             INVALID_MOVE_RE: (lambda match: Error(match.group(2))),
-            RCV_MOVE_RE: (lambda match: MoveMessage(match.group(1), match.group(2), match.group(3), match.group(4))),
-            FLAG_RE: (lambda match: FlagMessage(match.group(1))),
+            RCV_MOVE_RE: (lambda match: MoveMessage(posToTuple(match.group(1)), \
+                                                    posToTuple(match.group(2)), \
+                                                    match.group(3), \
+                                                    match.group(4))),
+            FLAG_RE: (lambda match: FlagMessage(posToTuple(match.group(1)))),
             WINNING_RE: (lambda match: WinningMessage(match.group(1)))
         }
+
+# String -> Tuple
+def posToTuple(pos):
+    (ord(pos[0]) - ord('A'), int(pos[1:]))
 
 # Message super class
 class Message(object):
@@ -63,6 +69,7 @@ class MoveMessage(Message):
         self.player = player
         self.movetype = movetype
 
+
     # -> String
     # returns a string representing the serialized board
     def serialize(self):
@@ -71,28 +78,26 @@ class MoveMessage(Message):
         base_char = ord('A')
         return "( %c%d %c%d )"%(base_char + p[0], p[1] + 1, base_char + t[0], t[1] + 1)
  
-    def deserialize(self):
-        # here is where we create the Piece from the message string
-        
 
 class FlagMessage(Message):
-    # -> Message
+    # Tuple -> Message
     def __init__(self, pos):
         self.pos = pos
     
-    def deserialize(self):
-        # here is where we create the Piece from the message string
+
 
 class WinningMessage(Message):
-    # -> Message
+    # String -> Message
     def __init__(self, result):
         self.result = result
 
+
 class Error(Message):
-    # -> Message
+    # String -> Message
     def __init__(self, error):
         self.error = error
-    
+
+
 
 
 
