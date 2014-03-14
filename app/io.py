@@ -9,8 +9,8 @@ def send(msg):
      sys.stdout.flush()
 
 def receive():
-     packet = sys.stdin.readlines()
-     msg = Message(packet)
+     packet = sys.stdin.readline()
+     msg = message.deserialize(packet)
      return msg
 
      
