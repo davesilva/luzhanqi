@@ -106,7 +106,7 @@ class WinningMessage(Message):
     def __str__(self):
         return "Player %s"%(result)
 
-class Error(Message):
+class ErrorMessage(Message):
     # String -> Message
     def __init__(self, error):
         self.error = error
