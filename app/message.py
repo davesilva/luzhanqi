@@ -6,7 +6,7 @@ IM_PIECE_MOVE_RE = "Piece not movable"
 IM_NO_PIECE_RE = "No Piece"
 IM_FT_INVALID_RE = "From To Invalid"
 IM_LOC_INVALID_RE = "Location Invalid"
-INVALID_MOVE_RE = "(Invalid Board Move) (%s|%s|%s|%s)" % (IM_PIECE_MOVE, IM_NO_PIECE, IM_FT_INVALID, IM_LOC_INVALID)
+INVALID_MOVE_RE = "(Invalid Board Move) (%s|%s|%s|%s)" % (IM_PIECE_MOVE_RE, IM_NO_PIECE_RE, IM_FT_INVALID_RE, IM_LOC_INVALID_RE)
 POSITION_RE = "([A-E][0-9][0-9]?)" 
 PLAYER_RE = "([1|2])"
 RCV_MOVE_RE = "%s %s %s (move|win|loss|tie)$" % (POSITION_RE, POSITION_RE, PLAYER_RE)
@@ -28,6 +28,14 @@ RE_MAP ={
 def posToTuple(pos):
     (ord(pos[0]) - ord('A'), int(pos[1:]))
 
+# returns an instance of the subclass 
+def deserialize(packet):
+    for rx in RE_MAP:
+        match = re.search(rx, packet)
+        if match:
+           return RE_MAP[rx](match)
+
+
 # Message super class
 class Message(object):
 
@@ -37,17 +45,8 @@ class Message(object):
         pass
     def serialize(self):
         pass
-    def deserialize(self):
-        pass
         
-    # returns an instance of the subclass 
-    def process(self):
-        for rx in RE_MAP:
-            match = re.search(rx, self.msgstring)
-            if match:
-               return RE_MAP[rx](match)
-
-
+    
 class InitMessage(Message):
     # -> Message
     # takes a Board, initializes the instance var
@@ -85,7 +84,6 @@ class FlagMessage(Message):
         self.pos = pos
     
 
-
 class WinningMessage(Message):
     # String -> Message
     def __init__(self, result):
@@ -96,9 +94,5 @@ class Error(Message):
     # String -> Message
     def __init__(self, error):
         self.error = error
-
-
-
-
 
 
