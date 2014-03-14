@@ -37,7 +37,7 @@ def deserialize(packet):
         if match:
            return RE_MAP[rx](match)
 
-    raise BadMessageException("Invalid Message from the Ref")
+    raise BadMessageException("Invalid Message from the Ref: %s"%(packet))
 
 
 # Bad message from the Ref Exception

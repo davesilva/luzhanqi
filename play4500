@@ -20,29 +20,34 @@ def main():
 
     io.send(init_msg)
 
+    game_board = init_board
     # If we are going first, print the first move
     if config.turn == 1:
         mov_msg = message.MoveMessage(FIRST_MOVE[0], FIRST_MOVE[1])
-        board.move_piece(FIRST_MOVE[0], FIRST_MOVE[1])
+        game_board.move_piece(FIRST_MOVE[0], FIRST_MOVE[1])
         io.send(mov_msg)
 
-    board = init_board
     # Call board.fill_opponent() to put placeholder opponent pieces
     while True:
         msg = io.receive()
-        if isinstance(msg, MoveMessage):
-            board.move_piece(msg.posfrom, msg.posto)
-            list_of_moves = board.iterate_all_moves(board.Owner.PLAYER)
-            rand_idx = random.randint(0, len(nmove))
-            next_move = list_of_moves[rand_idx]
+        if isinstance(msg, message.MoveMessage):
+            game_board = game_board.update(msg)
+            if msg.player == config.turn:
+                continue
+            # delete following line when board.update is here
+            #game_board.move_piece(msg.posfrom, msg.posto)
+            list_of_moves = game_board.iterate_all_moves(board.Owner.PLAYER)
+            list_of_moves = list(list_of_moves)
+            rand_idx = random.randint(0, len(list_of_moves))
+            next_move = list_of_moves[0]
             mov_msg = message.MoveMessage(next_move[0], next_move[1])
             io.send(mov_msg)
-        elif isinstance(msg, FlagMessage):
+        elif isinstance(msg, message.FlagMessage):
             #board.set_flag(msg.pos)
             continue
-        elif isinstance(msg, WinningMessage):
+        elif isinstance(msg, message.WinningMessage):
             break
-        elif isinstance(msg, ErrorMessage):
+        elif isinstance(msg, message.ErrorMessage):
             exit(-1)
 
     return 0
