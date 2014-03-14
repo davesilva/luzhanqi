@@ -20,7 +20,7 @@ class Space:
         self.adjacent.add(v)
 
 
-def adjacent(v1, v2):
+def is_adjacent(v1, v2):
     return (v2 in _board_graph[v1])
 
 
