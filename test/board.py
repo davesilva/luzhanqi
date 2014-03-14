@@ -104,25 +104,32 @@ class TestBoard(unittest.TestCase):
     def test_iterate_all_moves_with_one_piece(self):
         p = Piece((0, 0), Owner.PLAYER, Rank('8'))
         b = Board().place_piece(p)
-        self.assertEqual(list(b.iterate_all_moves(Owner.PLAYER)),
-                         list(b.iterate_moves_for_piece(p)))
+
+        expected = [((0, 0), m) for m in b.iterate_moves_for_piece(p)]
+        self.assertEqual(list(b.iterate_all_moves(Owner.PLAYER)), expected)
 
     def test_iterate_all_moves_with_multiple_pieces(self):
         p1 = Piece((0, 0), Owner.PLAYER, Rank('8'))
         p2 = Piece((0, 1), Owner.PLAYER, Rank('4'))
         b = Board().place_piece(p1).place_piece(p2)
-        self.assertEqual(list(b.iterate_all_moves(Owner.PLAYER)),
-                         list(b.iterate_moves_for_piece(p1)) +
-                         list(b.iterate_moves_for_piece(p2)))
+
+        expected = ([((0, 0), m) for m in b.iterate_moves_for_piece(p1)] +
+                    [((0, 1), m) for m in b.iterate_moves_for_piece(p2)])
+        self.assertEqual(list(b.iterate_all_moves(Owner.PLAYER)), expected)
 
     def test_iterate_all_moves_with_both_players(self):
         p1 = Piece((0, 0), Owner.PLAYER, Rank('8'))
         p2 = Piece((0, 1), Owner.OPPONENT, Rank('4'))
         b = Board().place_piece(p1).place_piece(p2)
+
+        expected_for_player = [((0, 0), m)
+                               for m in b.iterate_moves_for_piece(p1)]
+        expected_for_opponent = [((0, 1), m)
+                                 for m in b.iterate_moves_for_piece(p2)]
         self.assertEqual(list(b.iterate_all_moves(Owner.PLAYER)),
-                         list(b.iterate_moves_for_piece(p1)))
+                         expected_for_player)
         self.assertEqual(list(b.iterate_all_moves(Owner.OPPONENT)),
-                         list(b.iterate_moves_for_piece(p2)))
+                         expected_for_opponent)
 
 if __name__ == '__main__':
     unittest.main()

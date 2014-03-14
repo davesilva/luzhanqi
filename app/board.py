@@ -68,20 +68,29 @@ class Board:
         else:
             return board_layout.is_camp(position)
 
+    # Owner -> Generator(Piece)
+    # Returns a generator which returns all pieces owned by the given player
     def iterate_pieces(self, owner):
         i = iter(self.pieces_list)
         return filter(lambda p: p.owner == owner, i)
 
+    # Piece -> Generator(Position)
+    # Returns a generator which returns all possible moves that can be made
+    # by that piece, where a move is a position that this piece can move to.
     def iterate_moves_for_piece(self, piece):
         i = board_layout.iterate_adjacent(piece.position)
         # Make sure we exclude blocked spaces
         i = filter(lambda m: not self.is_space_blocked_by(m, piece.owner), i)
         return i
 
+    # Owner -> Generator((Position, Position))
+    # Returns generator which returns all possible moves that can be made
+    # by the given player (where a move is a tuple of positions
+    # (position_from, position_to)).
     def iterate_all_moves(self, owner):
         for piece in self.iterate_pieces(owner):
             for move in self.iterate_moves_for_piece(piece):
-                yield move
+                yield (piece.position, move)
 
     def serialize(self):
         return ("( " +
