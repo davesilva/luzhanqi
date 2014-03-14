@@ -57,14 +57,47 @@ class TestMessage(unittest.TestCase):
     """ 
 
     def testDeserializeReceiveMove1(self):
-        d1 = deserialize("A1 A2 1 move")
-        d2 = MoveMessage((0,1), (0,1), "1", "move")
+        d1 = deserialize("A1 A1 1 move")
+        d2 = MoveMessage((0,0), (0,0), 1, "move")
         self.assertEqual(d1, d2)
 
     def testDeserializeReceiveMove2(self):
+        d1 = deserialize("A2 E3 2 win")
+        d2 = MoveMessage((0,1), (4,2), 2, "win")
+        self.assertEqual(d1, d2)
+
+    def testDeserializeReceiveMove3(self):
         self.assertRaises(BadMessageException, deserialize, "Z1 A2 1 move")
 
+    def testDeserializeReceiveMove4(self):
+        self.assertRaises(BadMessageException, deserialize, "A1 F2 1 move")
 
+    """
+    F <position>
+    """
+
+    def testDeserializeFlagMessage1(self):
+        d1 = deserialize("F A2")
+        d2 = FlagMessage((0, 1))
+        self.assertEqual(d1, d2)
+
+    def testDeserializeFlagMessage2(self):
+        self.assertRaises(BadMessageException, deserialize, "F E13")
+
+    """
+    <winningPlayer> Victory
+    <winningPlayer> ::= "1" | "2" | "No"
+    """
+
+    def testDeserializeWinningMessage(self):
+        d1 = deserialize("1 Victory")
+        d2 = WinningMessage("1")
+        self.assertEqual(d1, d2)
+
+    def testDeserializeWinningMessage(self):
+        d1 = deserialize("No Victory")
+        d2 = WinningMessage("No")
+        self.assertEqual(d1, d2)
 
 
 if __name__ == '__main__':
