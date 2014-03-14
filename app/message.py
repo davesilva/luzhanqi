@@ -17,13 +17,13 @@ RE_MAP =
         {
             INVALID_SETUP_RE: (lambda match: Error(match.group(1))),
             INVALID_MOVE_RE: (lambda match: Error(match.group(2))),
-            RCV_MOVE_RE: (lambda match: RcvMoveMessage(match.group(1), match.group(2), match.group(3), match.group(4))),
+            RCV_MOVE_RE: (lambda match: MoveMessage(match.group(1), match.group(2), match.group(3), match.group(4))),
             FLAG_RE: (lambda match: FlagMessage(match.group(1))),
             WINNING_RE: (lambda match: WinningMessage(match.group(1)))
         }
 
 # Message super class
-class SendMessage(object):
+class Message(object):
 
     def __init__(self):
         pass
@@ -31,9 +31,18 @@ class SendMessage(object):
         pass
     def serialize(self):
         pass
+    def deserialize(self):
+        pass
+        
+    # returns an instance of the subclass 
+    def process(self):
+        for rx in RE_MAP:
+            match = re.search(rx, self.msgstring)
+            if match:
+               return RE_MAP[rx](match)
 
 
-class InitMessage(SendMessage):
+class InitMessage(Message):
     # -> Message
     # takes a Board, initializes the instance var
     def __init__(self, aboard):
@@ -45,12 +54,14 @@ class InitMessage(SendMessage):
         return self.board.serialize()
 
 
-class MoveMessage(SendMessage):
+class MoveMessage(Message):
     # -> Message
     # takes two tuples, and initializes the instance vars
-    def __init__(self, posfrom, posto):
+    def __init__(self, posfrom, posto, player=1, movetype=""):
         self.posfrom = posfrom
         self.posto = posto
+        self.player = player
+        self.movetype = movetype
 
     # -> String
     # returns a string representing the serialized board
@@ -59,54 +70,29 @@ class MoveMessage(SendMessage):
         t = self.posto
         base_char = ord('A')
         return "( %c%d %c%d )"%(base_char + p[0], p[1] + 1, base_char + t[0], t[1] + 1)
-
-
-class ReceiveMessage(object):
-
-    def __init__(self, msgstring):
-        self.msgstring = msgstring
-
-    def __str__(self):
-        pass
-
+ 
     def deserialize(self):
-        rawstring = self.msgstring;
-        if(rawstring == ""):
-            try()
-
-    def deserialize(self):
-        for rx in RE_MAP:
-            match = re.search(rx, self.msgstring)
-            if match:
-               return RE_MAP[rx](match)
-
-
-class Error(ReceiveMessage):
-    # -> Message
-    def __init__(self, error):
-        self.error = error
-
-class RcvMoveMessage(ReceiveMessage):
-    # -> Message
-    def __init__(self, posfrom, posto, player, movetype):
-        self.posfrom = posfrom
-        self.posto = posto
-        self.player = player
-        self.movetype = 
-
-    def deserialize(self):
+        # here is where we create the Piece from the message string
         
 
-class FlagMessage(ReceiveMessage):
+class FlagMessage(Message):
     # -> Message
     def __init__(self, pos):
         self.pos = pos
+    
+    def deserialize(self):
+        # here is where we create the Piece from the message string
 
-class WinningMessage(ReceiveMessage):
+class WinningMessage(Message):
     # -> Message
     def __init__(self, result):
         self.result = result
 
+class Error(Message):
+    # -> Message
+    def __init__(self, error):
+        self.error = error
+    
 
 
 
