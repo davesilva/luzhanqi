@@ -18,6 +18,6 @@ def parse_board():
             if rank != ".":
                 b = b.place_piece(board.Piece((x, y),
                                   board.Owner.PLAYER,
-                                  rank=board.Rank(rank)))
+                                  ranks=board.Rank(rank)))
 
     return b

@@ -101,6 +101,33 @@ class Board:
                 " ".join([p.serialize() for p in self.pieces_list]) + " )")
 
 
+    # Position -> Board
+    # remove the piece at pos
+    def remove_piece(self, pos):
+        piece = self.piece_at(pos)
+
+        if piece is not None:
+            # List without piece
+            new_list = [p for p in self.pieces_list if p != piece]
+
+            return Board(new_list)
+        else:
+            return self
+
+    # Message -> Board
+    # delegates to the appropriate functions
+    # move or delete 
+    def update(self, msg):
+        move_type = msg.movetype
+        if move_type == "move":
+            return self.move_piece(msg.posfrom, msg.posto)
+        if move_type == "win":
+            return self.move_piece(msg.posfrom, msg.posto)
+        if move_type == "loss":
+            return self.remove_piece(msg.posfrom)
+        if move_type == "tie":
+            return self.remove_piece(msg.posfrom).remove_piece(msg.posto)
+
 class Piece:
     RANK_NAMES = [str(i) for i in range(1, 10)] + ['B', 'L', 'F']
     ALL_RANKS = frozenset([Rank(i) for i in RANK_NAMES])
