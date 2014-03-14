@@ -1,6 +1,5 @@
 # A Position is a tuple of Numbers (row, column)
 import copy
-import itertools
 import app.board_layout as board_layout
 
 
