@@ -3,6 +3,7 @@ import app.board as board
 
 PATH = "app/template_board"
 
+
 # -> Board
 # parse "./board" and return a board
 def parse_board():
@@ -15,6 +16,8 @@ def parse_board():
     for y, row in enumerate(raw):
         for x, rank in enumerate(row):
             if rank != ".":
-                b = b.place_piece(board.Piece(rank, (x, y)))
+                b = b.place_piece(board.Piece((x, y),
+                                  board.Owner.PLAYER,
+                                  rank=board.Rank(rank)))
 
     return b
