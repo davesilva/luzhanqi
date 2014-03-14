@@ -39,6 +39,7 @@ def main():
             io.send(mov_msg)
         elif isinstance(msg, FlagMessage):
             #board.set_flag(msg.pos)
+            continue
         elif isinstance(msg, WinningMessage):
             break
         elif isinstance(msg, ErrorMessage):
