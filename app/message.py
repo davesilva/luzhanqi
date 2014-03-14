@@ -16,17 +16,17 @@ WINNING_RE = "([1|2|No]) Victory"
 RE_MAP ={
             INVALID_SETUP_RE: (lambda match: Error(match.group(1))),
             INVALID_MOVE_RE: (lambda match: Error(match.group(2))),
-            RCV_MOVE_RE: (lambda match: MoveMessage(posToTuple(match.group(1)), \
-                                                    posToTuple(match.group(2)), \
+            RCV_MOVE_RE: (lambda match: MoveMessage(pos_to_tuple(match.group(1)), \
+                                                    pos_to_tuple(match.group(2)), \
                                                     match.group(3), \
                                                     match.group(4))),
-            FLAG_RE: (lambda match: FlagMessage(posToTuple(match.group(1)))),
+            FLAG_RE: (lambda match: FlagMessage(pos_to_tuple(match.group(1)))),
             WINNING_RE: (lambda match: WinningMessage(match.group(1)))
         }
 
 # String -> Tuple
-def posToTuple(pos):
-    (ord(pos[0]) - ord('A'), int(pos[1:]))
+def pos_to_tuple(pos):
+    return (ord(pos[0]) - ord('A'), int(pos[1:]))
 
 # returns an instance of the subclass 
 def deserialize(packet):
@@ -94,5 +94,8 @@ class Error(Message):
     # String -> Message
     def __init__(self, error):
         self.error = error
+
+    def __eq__(self, obj):
+        self.error == obj.error
 
 
