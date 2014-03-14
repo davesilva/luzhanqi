@@ -24,6 +24,10 @@ def is_adjacent(v1, v2):
     return (v2 in _board_graph[v1])
 
 
+def all_adjacent(position):
+    return iter(_board_graph[position])
+
+
 def _connect(v1, v2):
     (x1, y1) = v1
     (x2, y2) = v2

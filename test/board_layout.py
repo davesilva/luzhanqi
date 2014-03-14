@@ -18,6 +18,12 @@ class TestBoardLayout(unittest.TestCase):
         self.assertFalse(layout.is_adjacent((0, 0), (0, 0)))
         self.assertFalse(layout.is_adjacent((3, 4), (3, 4)))
 
+    def test_all_adjacent_length(self):
+        self.assertEqual(len(list(layout.all_adjacent((0, 0)))), 2)
+        self.assertEqual(len(list(layout.all_adjacent((2, 2)))), 4)
+        self.assertEqual(len(list(layout.all_adjacent((1, 2)))), 8)
+        self.assertEqual(len(list(layout.all_adjacent((2, 5)))), 6)
+
 
 if __name__ == '__main__':
     unittest.main()
