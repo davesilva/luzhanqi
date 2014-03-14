@@ -4,6 +4,8 @@ from app.config import Config
 import app.board_parser as board_parser
 import app.message as message
 import app.io as io
+import app.board as board
+import random
 
 # our first move, a tuple of tuples (from, to)
 FIRST_MOVE = ((2,1),(3,2))
@@ -21,11 +23,26 @@ def main():
     # If we are going first, print the first move
     if config.turn == 1:
         mov_msg = message.MoveMessage(FIRST_MOVE[0], FIRST_MOVE[1])
+        board.move_piece(FIRST_MOVE[0], FIRST_MOVE[1])
         io.send(mov_msg)
 
-    """
-        Real Deal here
-    """
+    board = init_board
+    # Call board.fill_opponent() to put placeholder opponent pieces
+    while True:
+        msg = io.receive()
+        if isinstance(msg, MoveMessage):
+            board.move_piece(msg.posfrom, msg.posto)
+            list_of_moves = board.iterate_all_moves(board.Owner.PLAYER)
+            rand_idx = random.randint(0, len(nmove))
+            next_move = list_of_moves[rand_idx]
+            mov_msg = message.MoveMessage(next_move[0], next_move[1])
+            io.send(mov_msg)
+        elif isinstance(msg, FlagMessage):
+            #board.set_flag(msg.pos)
+        elif isinstance(msg, WinningMessage):
+            break
+        elif isinstance(msg, ErrorMessage):
+            exit(-1)
 
     return 0
 
