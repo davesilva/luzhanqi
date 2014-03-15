@@ -1,6 +1,6 @@
 _WIDTH = 5
 _HEIGHT = 12
-_HEADQUARTERS_LOCATIONS = [(0, 1), (0, 3)]
+_HEADQUARTERS_LOCATIONS = [(1, 0), (3, 0)]
 _CAMP_LOCATIONS = [(1, 2), (1, 4), (2, 3), (3, 2), (3, 4)]
 _board_graph = {}
 

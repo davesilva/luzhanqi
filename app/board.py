@@ -151,7 +151,8 @@ class Piece:
     # -> Boolean
     # Returns true if the piece cannot be moved (it is a flag or landmine)
     def is_stationary(self):
-        return len(self.ranks.difference({Rank('L'), Rank('F')})) == 0
+        return (board_layout.is_headquarters(self.position) or
+                len(self.ranks.difference({Rank('L'), Rank('F')})) == 0)
 
     # Piece -> Boolean
     # Check if the given piece is the same as this instance

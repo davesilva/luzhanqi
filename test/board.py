@@ -34,6 +34,10 @@ class TestPiece(unittest.TestCase):
         p = Piece((0, 0), Owner.PLAYER, {Rank('F'), Rank('L')})
         self.assertTrue(p.is_stationary())
 
+    def test_is_stationary_with_piece_in_headquarters(self):
+        p = Piece((1, 0), Owner.PLAYER, Rank('1'))
+        self.assertTrue(p.is_stationary())
+
     def test_is_stationary_with_non_stationary_pieces(self):
         p = Piece((0, 0), Owner.PLAYER, Rank('1'))
         self.assertFalse(p.is_stationary())
