@@ -9,7 +9,12 @@ Amat Cama: cama.a@husky.neu.edu
 Feng-Yun Lin: lin.f@husky.neu.edu
 
 ===================================================================================
-[Build instructions]
+[Building Luzhanqi]
+
+There are no build steps necessary to run this application.
+
+===================================================================================
+[Running Luzhanqi]
 
 Open up the command line:
 
