@@ -2,7 +2,7 @@
 A Position is a tuple of Numbers (row, column)
 """
 
-from app.position import *
+#from app.position import *
 
 _WIDTH = 5
 _HEIGHT = 12
@@ -10,7 +10,12 @@ _HEADQUARTERS_LOCATIONS = [(1, 0), (3, 0)]
 _CAMP_LOCATIONS = [(1, 2), (1, 4), (2, 3), (3, 2), (3, 4)]
 _board_graph = {}
 _BOARD_FILE = "board_graph"
+def pos_to_str(pos):
+    return chr(pos[0] + ord('A')) + str((pos[1] + 1))
 
+# String -> Position 
+def str_to_pos(s):
+    return (ord(s[0]) - ord('A'), int(s[1:]) - 1)
 
 class Space:
     """
@@ -22,7 +27,7 @@ class Space:
     """
     REGULAR, CAMP, HEADQUARTERS = range(0, 3)
 
-    def __init__(self, on_railroad=False, space_type=REGULAR, adjacent):
+    def __init__(self, on_railroad, space_type, adjacent):
         """
         <Boolean> <Integer> -> Space
 
@@ -85,12 +90,17 @@ def generate_board():
     b = open(_BOARD_FILE, "r").readlines()
     for line in b:
         raw = line.strip().split(" ")
-        {str_to_pos(str_pos) for str_pos in raw[1:]}
+        _board_graph[raw[0]] = Space((raw[1] == "R"), type_to_num(raw[1]), {str_to_pos(str_pos) for str_pos in raw[2:]})
             
 
-
-       _board_graph[raw[0]] = raw[1:]
-
+# String -> Range(0,3)
+def type_to_num(t):
+    if(t == "S"):
+        return 0
+    if(t == "C"):
+        return 1
+    if(t == "H"):
+        return 2
 
 # Tuple -> String
 def pos_to_str(pos):
