@@ -3,20 +3,12 @@ from app.message import *
 
 class TestMessage(unittest.TestCase):
 
-    def testPosToTuple1(self):
+    def test_pos_to_tuple(self):
         t1 = pos_to_tuple("A1")
         t2 = (0, 0)
+        t3 = pos_to_tuple("B3")
         self.assertEqual(t1, t2)
-
-    def testPosToTuple2(self):
-        t1 = pos_to_tuple("A12")
-        t2 = pos_to_tuple("A12")
-        self.assertEqual(t1, t2)
-
-    def testPosToTuple3(self):
-        t1 = pos_to_tuple("A12")
-        t2 = pos_to_tuple("A1")
-        self.assertNotEqual(t1, t2)
+        self.assertNotEqual(t1, t3)
 
     """
     Invalid Board Setup
