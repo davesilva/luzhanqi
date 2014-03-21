@@ -1,9 +1,13 @@
 import copy
+import logging
 import app.board_layout as board_layout
 
-""" 
+"""
 A Position is a tuple of Numbers (row, column)
 """
+
+log = logging.getLogger("board")
+
 
 class Rank:
     """
@@ -199,6 +203,14 @@ class Board:
         return ("( " +
                 " ".join([p.serialize() for p in self.pieces_list]) + " )")
 
+<<<<<<< HEAD
+=======
+    def dump_debug_board(self):
+        log.debug(" ".join([str(p) for p in self.pieces_list]))
+
+    # Position -> Board
+    # remove the piece at pos
+>>>>>>> Improve the debug board output
     def remove_piece(self, pos):
         """
         Position -> Board
@@ -332,6 +344,10 @@ class Piece:
                 self.ranks == piece.ranks and
                 self.position == piece.position and
                 self.owner == piece.owner)
+
+    def __str__(self):
+        ranks = "[%s]" % ", ".join([str(rank) for rank in self.ranks])
+        return "( %c%d %s )" % (ord('A') + x, y + 1, ranks)
 
     def serialize(self):
         """
