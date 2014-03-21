@@ -342,8 +342,14 @@ class Piece:
 
     def __str__(self):
         (x, y) = self.position
+
+        if self.owner == Owner.PLAYER:
+            owner = "P"
+        else:
+            owner = "O"
+
         ranks = "[%s]" % ", ".join([str(rank) for rank in self.ranks])
-        return "( %c%d %s )" % (ord('A') + x, y + 1, ranks)
+        return "( %c%d %c %s )" % (ord('A') + x, y + 1, owner, ranks)
 
     def serialize(self):
         """
