@@ -128,6 +128,42 @@ class Board:
         if move_type == "tie":
             return self.remove_piece(msg.posfrom).remove_piece(msg.posto)
 
+    def initialize_opponent_pieces(self):
+        """
+        -> Board
+
+        Adds all of the opponent's pieces to the board in their
+        initial configuration.
+
+        """
+        board = self
+
+        for x in range(0, 5):
+            for y in range(6, 12):
+                ranks = Piece.ALL_RANKS
+
+                # Camps do not have pieces in them, so skip over them
+                if board_layout.is_camp((x, y)):
+                    continue
+
+                # Pieces outside the headquarters cannot be the flag
+                if not board_layout.is_headquarters((x, y)):
+                    ranks = ranks - {Rank('F')}
+
+                # Landmines cannot be outside of the back two rows
+                if y in range(6, 10):
+                    ranks = ranks - {Rank('L')}
+
+                # Bombs cannot be in the front row
+                if y is 6:
+                    ranks = ranks - {Rank('B')}
+
+                piece = Piece((x, y), Owner.OPPONENT, ranks)
+                board = board.place_piece(piece)
+
+        return board
+
+
 class Piece:
     RANK_NAMES = [str(i) for i in range(1, 10)] + ['B', 'L', 'F']
     ALL_RANKS = frozenset([Rank(i) for i in RANK_NAMES])

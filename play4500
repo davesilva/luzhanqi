@@ -31,7 +31,9 @@ def main():
         game_board.move_piece(FIRST_MOVE[0], FIRST_MOVE[1])
         io.send(mov_msg)
 
-    # Call board.fill_opponent() to put placeholder opponent pieces
+    # Add the opponent's pieces to the board
+    game_board = game_board.initialize_opponent_pieces()
+
     while True:
         msg = io.receive()
         if isinstance(msg, message.MoveMessage):
