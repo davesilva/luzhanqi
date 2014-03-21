@@ -70,6 +70,7 @@ class TestBoard(unittest.TestCase):
         self.assertTrue(isinstance(b.piece_at((0, 1)), Piece))
         self.assertEqual(b.piece_at((0, 0)), None)
 
+<<<<<<< HEAD
     def test_move_piece_nonexistant(self):
         p = Piece((0, 0), Owner.PLAYER, Rank('1'))
         b = Board().place_piece(p).move_piece((0, 0), (0, 1))
@@ -86,13 +87,14 @@ class TestBoard(unittest.TestCase):
         mt = Board()
         self.assertRaises(PieceNotFoundException, mt.remove_piece, (0, 0))
 
-    def test_is_space_blocked_by(self):
+
+    def test_is_space_blocked_for(self):
         p = Piece((0, 0), Owner.PLAYER, Rank('1'))
         b = Board().place_piece(p)
-        self.assertTrue(b.is_space_blocked_by((0, 0), Owner.PLAYER))
-        self.assertFalse(b.is_space_blocked_by((0, 0), Owner.OPPONENT))
-        self.assertFalse(b.is_space_blocked_by((0, 1), Owner.PLAYER))
-        self.assertFalse(b.is_space_blocked_by((0, 1), Owner.OPPONENT))
+        self.assertTrue(b.is_space_blocked_for((0, 0), Owner.PLAYER))
+        self.assertFalse(b.is_space_blocked_for((0, 0), Owner.OPPONENT))
+        self.assertFalse(b.is_space_blocked_for((0, 1), Owner.PLAYER))
+        self.assertFalse(b.is_space_blocked_for((0, 1), Owner.OPPONENT))
 
     def test_iterate_pieces_with_one_piece(self):
         p1 = Piece((0, 0), Owner.PLAYER, Rank('8'))
