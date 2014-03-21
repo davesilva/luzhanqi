@@ -134,9 +134,6 @@ class Board:
 
         """
 
-        # TODO: if a player moves into an opponent's headquarters,
-        # it may not move again
-
         p = self.piece_at(position)
         if p is None:
             return False
@@ -318,7 +315,7 @@ class Piece:
         -> Boolean 
 
         Returns true if this piece cannot be moved i.e. if it is a flag
-        or a landmine
+        or a landmine or positioned at a headquarter. 
 
         """
         return (board_layout.is_headquarters(self.position) or

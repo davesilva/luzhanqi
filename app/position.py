@@ -16,4 +16,6 @@ def str_to_pos(s):
 	return Position(ord(s[0]) - ord('A'), int(s[1:]) - 1)
 
 
-print(str_to_pos("A1"))
+
+	
+
