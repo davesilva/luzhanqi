@@ -1,5 +1,6 @@
 import unittest
-from app.board import Board, Piece, Owner, Rank
+from app.board import Board, Piece, Owner, Rank, PieceNotFoundException
+from app.message import *
 
 
 class TestRank(unittest.TestCase):
@@ -68,6 +69,22 @@ class TestBoard(unittest.TestCase):
         b = Board().place_piece(p).move_piece((0, 0), (0, 1))
         self.assertTrue(isinstance(b.piece_at((0, 1)), Piece))
         self.assertEqual(b.piece_at((0, 0)), None)
+
+    def test_move_piece_nonexistant(self):
+        p = Piece((0, 0), Owner.PLAYER, Rank('1'))
+        b = Board().place_piece(p).move_piece((0, 0), (0, 1))
+        self.assertRaises(PieceNotFoundException, b.move_piece, (2,1), (3,2))
+
+    def test_remove_piece(self):
+        p = Piece((0, 0), Owner.PLAYER, Rank('1'))
+        mt = Board()
+        b = Board().place_piece(p).remove_piece((0, 0))
+        self.assertEqual(mt.serialize(), b.serialize())
+
+    def test_remove_piece_nonexistant(self):
+        p = Piece((0, 0), Owner.PLAYER, Rank('1'))
+        mt = Board()
+        self.assertRaises(PieceNotFoundException, mt.remove_piece, (0, 0))
 
     def test_is_space_blocked_by(self):
         p = Piece((0, 0), Owner.PLAYER, Rank('1'))
@@ -153,7 +170,6 @@ class TestBoard(unittest.TestCase):
         b = Board().place_piece(p1).place_piece(p2)
 
         self.assertEqual(list(b.iterate_all_moves(Owner.PLAYER)), [])
-
 
 if __name__ == '__main__':
     unittest.main()

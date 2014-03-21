@@ -23,6 +23,12 @@ class Owner:
     PLAYER = 0
     OPPONENT = 1
 
+class PieceNotFoundException(Exception):
+    def __init__(self, msg):
+        self.msg = msg
+
+    def __str__(self):
+        return repr(self.msg)
 
 class Board:
 
@@ -49,7 +55,8 @@ class Board:
 
             return Board(new_list)
         else:
-            return self
+            raise PieceNotFoundException("Cannot move piece from ( %c%d )" \
+                    %(ord('A') + src[0], src[1] + 1))
 
     # Position -> (Piece|None)
     def piece_at(self, position):
@@ -112,7 +119,8 @@ class Board:
 
             return Board(new_list)
         else:
-            return self
+            raise PieceNotFoundException("Cannot remove piece from ( %c%d )" \
+                    %(ord('A') + pos[0], pos[1] + 1))
 
     # Message -> Board
     # delegates to the appropriate functions
