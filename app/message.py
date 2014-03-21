@@ -1,6 +1,10 @@
 import app.board as board
 import re
 
+""" 
+A Position is a tuple of Numbers (row, column)
+"""
+
 # Regex of ref->player messages
 INVALID_SETUP_RE = "(Invalid Board Setup)$"
 IM_PIECE_MOVE_RE = "Piece not movable"
@@ -32,19 +36,18 @@ RE_MAP ={
          WINNING_RE: (lambda match: WinningMessage(match.group(1)))
         }
 
-
 def pos_to_tuple(pos):
     """
-    String -> Tuple 
+    String -> Position 
     
-    Converts a position on the board to a tuple.
+    Converts a string representation of position on the board to a 
+    Position as a Tuple.
 
     >>> pos_to_tuple("A1")
     (0,0)
     
     """
     return (ord(pos[0]) - ord('A'), int(pos[1:]) - 1)
-
 
 def deserialize(packet):
     """
@@ -68,15 +71,17 @@ def deserialize(packet):
     raise BadMessageException("Invalid Message from the Ref: %s"%(packet))
 
 
-
 class BadMessageException(Exception):
+    """
+    Instance variables:
+    String value
+    """
 
     def __init__(self, s):
         """
         String -> BadMessageException
 
-        Constructs that initializes instance variable self.value with
-        the given board 
+        Constructs a BadMessageException with the given message.
 
         Precondition: A message is sent from the ref to the player
         that does not match any regexes in RE_MAP
@@ -84,10 +89,9 @@ class BadMessageException(Exception):
         """
         self.value = s
 
-
     def __str__(self):
         """
-        . -> String
+        -> String
 
         Produce a readable official string representation of the instance's 
         value. 
@@ -101,33 +105,30 @@ class BadMessageException(Exception):
         return repr(self.value)
 
 
-
 # Message super class
 class Message(object):
 
     def __init__(self):
         """
-        . -> .
+        ->
 
         Function does nothing
 
         """
         pass
-
 
     def __str__(self):
         """
-        . -> .
+        ->
 
         Function does nothing
 
         """
         pass
 
-
     def serialize(self):
         """
-        . -> .
+        ->
 
         Function does nothing
 
@@ -136,42 +137,50 @@ class Message(object):
 
 
 class InitMessage(Message):
+    """
+    Instance variables:
+    Board board
+    
+    """
     
     def __init__(self, aboard):
         """
         Board -> InitMessage
 
-        Constructor that initializes instance variable self.board with
-        the given board. 
+        Constructs an InitMessage initialized with the given board.
 
         """
         self.board = aboard
 
-
     def serialize(self):
         """
-        . -> String
+        -> String
 
-        Returns a string representing the board
+        Serialize this InitMessage. 
 
         """
         return self.board.serialize()
 
 
 class MoveMessage(Message):
+    """
+    Instance variables:
+    Position posfrom
+    Position posto
+    Integer player
+    String movetype
+
+    """
 
     def __init__(self, posfrom, posto, player=1, movetype=""):
         """
-        Tuple Tuple Integer String -> MoveMessage
+        Position Position <Integer> <String> -> MoveMessage
 
-        Constructor for ref to player message that initializes 
-        instance variables self.posfrom, self.posto, self.player and 
-        self.movetype with the given input
-
-        Tuple Tuple -> MoveMessage
-
-        Constructor for player to ref message that initializes instance
-        variables self.posfrom and self.posto with the given input.
+        Constructs a Movemessage that represents a ref to player message
+        with the given values
+        or
+        Constructs a MoveMessage that represents a player to ref message
+        with the given values and default values. 
 
         """
         self.posfrom = posfrom
@@ -179,12 +188,11 @@ class MoveMessage(Message):
         self.player = player
         self.movetype = movetype
 
-
     def serialize(self):
         """
-        . -> String
+        -> String
 
-        Returns a string representing the serialized MoveMessage
+        Serialize this MoveMessage.
 
         >>> MoveMessage((1,4), (1,5)).serialize()
         "( B5 B6 )"
@@ -199,12 +207,11 @@ class MoveMessage(Message):
         return "( %c%d %c%d )"%(base_char + p[0], p[1] + 1, \
                                 base_char + t[0], t[1] + 1)
 
-
     def __str__(self):
         """
-        . -> String
+        -> String
 
-        Returns a human readable string representing a MoveMessage
+        Returns a human readable string representing a MoveMessage.
 
         >>> print(MoveMessage((1,4) (1,5)))
         Move message: ( B5 B6 )
@@ -215,13 +222,11 @@ class MoveMessage(Message):
         """
         return "Move message: %s"%(self.serialize())
 
-
     def __eq__(self, obj):
         """
-        . -> MoveMessage
+        -> MoveMessage
 
         Checks if this message and the given MoveMessage are equal 
-        by comparing the fields: posfrom, posto, player and movetype
 
         >>>> MoveMessage((1,4), (1,5)) == MoveMessage((1,4), (1,5))
         True
@@ -239,22 +244,27 @@ class MoveMessage(Message):
 
 
 class FlagMessage(Message):
+    """
+    Instance variables:
+    Position pos
+    
+    """
+
     def __init__(self, pos):
         """
-        Tuple -> FlagMessage
+        Position -> FlagMessage
 
-        Constructor for a flag message that initializes self.pos with the
-        given position that indicates the location of the flag. 
+        Constructs a FlagMessage initialized with the given position
+        of the flag.
 
         """
         self.pos = pos
 
-
     def __str__(self):
         """
-        . -> String 
+        -> String 
 
-        Returns a human readable string representing a FlagMessage
+        Returns a human readable string representing a FlagMessage.
 
         >>> print(FlagMessage((3,0))
         Flag position: ( D1 )
@@ -264,37 +274,37 @@ class FlagMessage(Message):
         p = self.pos
         return "Flag position: ( %c%d )"%(base_char + p[0], p[1] + 1)
 
-
     def __eq__(self, obj):
         """
         . -> FlagMessage
 
-        Checks if this FlagMessage is equal to the given FlagMessage
-        by comparing their instance variables for equality.
+        Checks if this FlagMessage is equal to the given FlagMessage.
 
         """
         return self.pos == obj.pos
 
 
-
 class WinningMessage(Message):
+    """
+    Instance variables:
+    String result
     
+    """
+
     def __init__(self, result):
         """
         String -> WinningMessage
 
-        Constructor for a winning message that initializes self.result
-        with the given result that indicates the winner of the game. 
+        Constructs a WinningMessage initialized with the given winner.
 
         """
         self.result = result
 
-
     def __str__(self):
         """
-        . -> String
+        -> String
 
-        Returns a human readable string representing WinningMessage
+        Returns a human readable string representing WinningMessage.
 
         >>> print(WinningMessage("1"))
         1
@@ -305,39 +315,38 @@ class WinningMessage(Message):
         """
         return "Player %s"%(result)
 
-
     def __eq__(self, obj):
         """
-        . -> WinningMessage
+        -> WinningMessage
 
-        Checks if this WinningMessage is equal to the given WinningMessage
-        by comparing their instance variables for equality. 
+        Checks if this WinningMessage is equal to the given WinningMessage.
 
         """
         return self.result == obj.result
 
 
-
 class ErrorMessage(Message):
+    """
+    Instance variables:
+    String error
+    
+    """
     def __init__(self, error):
         """
         String -> ErrorMessage
 
-        Constructor for an error message that initializes self.error
-        with the given string that indicates the error incurred.
+        Constructor an ErrorMessage initialized with the given error
+        message. 
 
         """
         self.error = error
 
-
     def __eq__(self, obj):
         """
-        Checks if this ErrorMessage is equal to the given ErrorMessage
-        by comparing their instance variables for equality.
+        Checks if this ErrorMessage is equal to the given ErrorMessage.
 
         """
         return self.error == obj.error
-
 
     def __str__(self):
         """
