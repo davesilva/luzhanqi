@@ -3,7 +3,7 @@ from app.config import Config
 from os import path
 from time import gmtime, strftime
 
-FORMAT_STRING = "%(asctime)s - %(levelname)s - %(message)s"
+FORMAT_STRING = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 
 config = Config()
 app_dir = path.dirname(path.abspath(__file__))
