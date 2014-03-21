@@ -1,9 +1,13 @@
 import copy
+import logging
 import app.board_layout as board_layout
 
-""" 
+"""
 A Position is a tuple of Numbers (row, column)
 """
+
+log = logging.getLogger("board")
+
 
 class Rank:
     """
@@ -199,6 +203,9 @@ class Board:
         return ("( " +
                 " ".join([p.serialize() for p in self.pieces_list]) + " )")
 
+    def dump_debug_board(self):
+        log.debug(" ".join([str(p) for p in self.pieces_list]))
+
     def remove_piece(self, pos):
         """
         Position -> Board
@@ -213,8 +220,8 @@ class Board:
             new_list = [p for p in self.pieces_list if p != piece]
             return Board(new_list)
         else:
-            raise PieceNotFoundException("Cannot remove piece from ( %c%d )" \
-                    %(ord('A') + pos[0], pos[1] + 1))
+            raise PieceNotFoundException("Cannot remove piece from ( %c%d )"
+                                         % (ord('A') + pos[0], pos[1] + 1))
 
     def update(self, msg):
         """
@@ -333,6 +340,17 @@ class Piece:
                 self.position == piece.position and
                 self.owner == piece.owner)
 
+    def __str__(self):
+        (x, y) = self.position
+
+        if self.owner == Owner.PLAYER:
+            owner = "P"
+        else:
+            owner = "O"
+
+        ranks = "[%s]" % ", ".join([str(rank) for rank in self.ranks])
+        return "( %c%d %c %s )" % (ord('A') + x, y + 1, owner, ranks)
+
     def serialize(self):
         """
         -> String
@@ -342,5 +360,6 @@ class Piece:
         """
         x = self.position[0]
         y = self.position[1]
+        (x, y) = self.position
         rank = str(next(iter(self.ranks)))
         return "( %c%d %c )" % (ord('A') + x, y + 1, rank)
