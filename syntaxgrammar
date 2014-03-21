@@ -1,0 +1,54 @@
+  <initial>   ::=  ( <inits> )
+  <inits>     ::=  
+                |  <init> <inits>
+  <init>      ::=  ( <position> <piece> )
+
+  <position>  ::=  A1 | A2 | A3 | A4 | A5 | A6 | A7 | A8 | A9 | A10 | A11 | A12
+                |  B1 | B2 | B3 | B4 | B5 | B6 | B7 | B8 | B9 | B10 | B11 | B12
+                |  C1 | C2 | C3 | C4 | C5 | C6 | C7 | C8 | C9 | C10 | C11 | C12
+                |  D1 | D2 | D3 | D4 | D5 | D6 | D7 | D8 | D9 | D10 | D11 | D12
+                |  E1 | E2 | E3 | E4 | E5 | E6 | E7 | E8 | E9 | E10 | E11 | E12
+  <piece>     ::=  F | L | B | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9
+
+
+
+Ref to Player Messages:
+1.Invalid Board Setup
+Message 1 is sent to a player when the player submits an invalid board setup.
+ 
+2.Invalid Board Move <moveErrorType>
+  <moveErrorType> ::= "Piece not movable" | "No Piece" | "From To Invalid" | "Location Invalid"
+
+["Invalid Board Move"] []
+
+ 
+Message 2 is sent to a player when the player submits an invalid move on their turn. "Piece not movable" indicates the piece the player has chosen to move may not move. "No Piece" indicates there is no piece in the "from" location. "From To Invalid" indicates that the player has attempted to move a piece in a way that does not follow the rules. "Location Invalid" indicates that the player has inputted an invalid location into either the "from" or "to" position.
+ 
+3.<position 1> <position 2> <player> <movetype>
+  <player> ::= "1" | "2"
+  <movetype> ::= "move" | "win" | "loss" | "tie"
+ 
+Message 3 is sent to both players when the ref has processed a move sent from a player to the ref, and validated the move according to the game play rules. <position 1> is the position moved from, and <position 2> is the position moved to.
+ 
+4.F <position>
+ 
+Message 4 is sent to both players when a field marshal has been captured, and a flag position is revealed. This message will be sent before message 3 is sent, when applicable.
+ 
+5.<winningPlayer> Victory
+  <winningPlayer> ::= "1" | "2" | "No"
+ 
+Message 5 is sent to both players with the number of the winning player when an end-game state has been reached.
+ 
+ 
+Player to Ref Messages:
+1. ( <position> <position> )
+ 
+Message 1 is sent to the ref from a player where it is that player's turn, and indicates the player's move.
+ 
+2. <initial> ::= ( <inits> )
+  <inits> ::=  <blank> | <init> <inits>
+    <init> ::= ( <position> <piece> )
+ 
+Message 2 is sent from a player to the ref upon the start of the game, with the player's chosen board setup.
+ 
+<position> and <piece> are as indicated in the specification put forth by Professor Clinger, here. Quotation marks indicate the beginning and end of strings.
