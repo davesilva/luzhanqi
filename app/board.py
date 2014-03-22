@@ -204,7 +204,7 @@ class Board:
                 " ".join([p.serialize() for p in self.pieces_list]) + " )")
 
     def dump_debug_board(self):
-        log.debug(" ".join([str(p) for p in self.pieces_list]))
+        log.debug(" | ".join([str(p) for p in self.pieces_list]))
 
     def remove_piece(self, pos):
         """
@@ -349,7 +349,7 @@ class Piece:
             owner = "O"
 
         ranks = "[%s]" % ", ".join([str(rank) for rank in self.ranks])
-        return "( %c%d %c %s )" % (ord('A') + x, y + 1, owner, ranks)
+        return "%c%d %c %s" % (ord('A') + x, y + 1, owner, ranks)
 
     def serialize(self):
         """
