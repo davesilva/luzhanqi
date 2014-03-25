@@ -1,0 +1,4 @@
+#!/bin/sh
+
+# Run the flake8 linter on every python file in the project
+flake8 **/*.py
