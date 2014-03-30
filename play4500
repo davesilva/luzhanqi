@@ -38,6 +38,9 @@ def main():
         if isinstance(msg, message.MoveMessage):
             game_board = game_board.update(msg)
             game_board.dump_debug_board()
+
+            # Pretty print the board (for debugging)
+            pp.draw_message(msg)
             pp.draw_board(game_board)
 
             if msg.player == config.turn:
