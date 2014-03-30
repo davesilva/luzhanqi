@@ -75,7 +75,8 @@ def draw_message(message):
     if os.path.exists(logconfig.logs_dir):
         fname = "player%d" % (config.turn) + ".draw"
         fp = open(logconfig.logs_dir + "/" + fname, "a")
-        fp.write(print_for_player(str(message), message.player) + "\n")
+        message_str = "%s -> %s" % (str(message), message.movetype)
+        fp.write(print_for_player(message_str, message.player) + "\n")
         fp.close()
 
 
@@ -84,6 +85,7 @@ def draw_board(aboard):
         buf = print_board(aboard)
         fname = "player%d" % (config.turn) + ".draw"
         fp = open(logconfig.logs_dir + "/" + fname, "a")
-        fp.write(str(aboard) + "\n" + buf + "\n")
+        debug_board = " | ".join([str(p) for p in aboard.pieces_list])
+        fp.write(debug_board + "\n" + buf + "\n")
         fp.write("-" * 80 + "\n")
         fp.close()
