@@ -2,6 +2,7 @@
 
 from app.config import Config
 import app.board_parser as board_parser
+import app.pretty_print as pp
 import app.message as message
 import app.io as io
 import app.board as board
@@ -37,6 +38,7 @@ def main():
         if isinstance(msg, message.MoveMessage):
             game_board = game_board.update(msg)
             game_board.dump_debug_board()
+            pp.draw_board(game_board)
 
             if msg.player == config.turn:
                 continue
