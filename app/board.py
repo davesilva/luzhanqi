@@ -236,7 +236,8 @@ class Board:
         if move_type == "move":
             return self.move_piece(msg.posfrom, msg.posto)
         if move_type == "win":
-            return self.move_piece(msg.posfrom, msg.posto)
+            without_loser = self.remove_piece(msg.posto)
+            return without_loser.move_piece(msg.posfrom, msg.posto)
         if move_type == "loss":
             return self.remove_piece(msg.posfrom)
         if move_type == "tie":
