@@ -1,6 +1,7 @@
 import copy
 import logging
 import app.board_layout as board_layout
+from fractions import Fraction, gcd
 
 """
 A Position is a tuple of Numbers (row, column)
@@ -160,15 +161,15 @@ class Board:
         """
         Piece -> [Generator_of Position]
 
-        Returns a generator for all possible moves that can 
-        be made by the given piece. A move is a position that the given 
-        piece can consider for relocation or attack. 
+        Returns a generator for all possible moves that can
+        be made by the given piece. A move is a position that the given
+        piece can consider for relocation or attack.
 
         """
-        # TODO: if given piece is an engineer, also need to consider 
+        # TODO: if given piece is an engineer, also need to consider
         # railway positions i.e. not just adjacent pieces
         # The paths to these positions should also not be blocked by
-        # the player/opponent's pieces. 
+        # the player/opponent's pieces.
 
         if piece.is_stationary():
             return iter([])
@@ -248,32 +249,64 @@ class Board:
         -> Board
 
         Adds all of the opponent's pieces to the board in their
-        initial configuration.
+        initial configuration. The initial probabilities are
+        set as follows:
+
+        P(flag | is_headquarters) = 1/2
+        P(flag | ~is_headquarters) = 0
+        P(landmine | (y in range(10, 12))) = 1/3 * (1 - P(flag))
+        P(landmine | ~(y in range(10, 12))) = 0
+        P(bomb | (y in range(7, 12))) = 1/10 * (1 - (P(flag) + P(landmine)))
+        P(bomb | ~(y in range(7, 12))) = 0
+        P(1) = P(2) = P(3) = 3/19 * (1 - (P(flag) + P(landmine) + P(bomb)))
+        P(4) = P(5) = P(6) = P(7) =
+            2/19 * (1 - (P(flag) + P(landmine) + P(bomb)))
+        P(8) = P(9) = 1/19 * (1 - (P(flag) + P(landmine) + P(bomb)))
 
         """
         board = self
 
         for x in range(0, 5):
             for y in range(6, 12):
-                ranks = Piece.ALL_RANKS
-
                 # Camps do not have pieces in them, so skip over them
                 if board_layout.is_camp((x, y)):
                     continue
 
+                p = {}  # dictionary of probabilities
+
                 # Pieces outside the headquarters cannot be the flag
-                if not board_layout.is_headquarters((x, y)):
-                    ranks = ranks - {Rank('F')}
+                if board_layout.is_headquarters((x, y)):
+                    p[Rank('F')] = Fraction(1, 2)
+                else:
+                    p[Rank('F')] = Fraction(0)
 
                 # Landmines cannot be outside of the back two rows
-                if y in range(6, 10):
-                    ranks = ranks - {Rank('L')}
+                if y in range(10, 12):
+                    p[Rank('L')] = Fraction(1, 3) * (1 - p[Rank('F')])
+                else:
+                    p[Rank('L')] = Fraction(0)
 
                 # Bombs cannot be in the front row
-                if y is 6:
-                    ranks = ranks - {Rank('B')}
+                if y in range(7, 12):
+                    p[Rank('B')] = (Fraction(1, 10) *
+                                    (1 - p[Rank('F')] - p[Rank('L')]))
+                else:
+                    p[Rank('B')] = Fraction(0)
 
-                piece = Piece((x, y), Owner.OPPONENT, ranks)
+                # Probability that the piece is not Flag, Landmine or Bomb
+                p_numeric_rank = (1 - p[Rank('F')]
+                                    - p[Rank('L')]
+                                    - p[Rank('B')])
+
+                # Any square can potentially contain a piece 1-9
+                for r in range(1, 4):
+                    p[Rank(str(r))] = Fraction(3, 19) * p_numeric_rank
+                for r in range(4, 8):
+                    p[Rank(str(r))] = Fraction(2, 19) * p_numeric_rank
+                for r in range(8, 10):
+                    p[Rank(str(r))] = Fraction(1, 19) * p_numeric_rank
+
+                piece = Piece((x, y), Owner.OPPONENT, p)
                 board = board.place_piece(piece)
 
         return board
@@ -282,31 +315,39 @@ class Board:
 class Piece:
     """
     Instance variables:
-    Position    position
-    Owner       owner
-    Set(Ranks)  ranks
+    Position                  position
+    Owner                     owner
+    Dictionary(Rank, Fraction)  ranks
+
+    The ranks Dictionary is a mapping from a Rank to a
+    probability. Probabilities are represented as a python
+    Fraction.
 
     """
-    RANK_NAMES = [str(i) for i in range(1, 10)] + ['B', 'L', 'F']
-    ALL_RANKS = frozenset([Rank(i) for i in RANK_NAMES])
 
-    def __init__(self, position, owner, ranks=ALL_RANKS):
+    def __init__(self, position, owner, ranks):
         """
-        Position Owner <Set(Rank)> -> Piece
+        Position Owner Rank|Dictionary(Rank, Fraction) -> Piece
 
         Constructs an instance of Piece initialized with its position,
-        owner and set of all possible ranks. 
+        owner and a dictionary that maps all possible ranks to the
+        probability of this piece having that rank. Alternatively,
+        ranks can be a single rank, in which case the probability
+        of that rank will be 1 and all others will be 0.
 
         """
         # Number tuple (row, column)
         self.position = position
         # Owner object
         self.owner = owner
-        # Set of all possible ranks
+
+        # If ranks is a single Rank rather than a dictionary, convert
+        # it into a dictionary where the probability of this piece
+        # having that rank is 1.0
         if isinstance(ranks, Rank):
-            self.ranks = frozenset([ranks])
+            self.probabilities = {ranks: 1}
         else:
-            self.ranks = ranks
+            self.probabilities = ranks
 
     def move(self, new_posn):
         """
@@ -315,9 +356,25 @@ class Piece:
         Returns a hard copy of this instance with a changed position. 
 
         """
-        return Piece(new_posn, self.owner, ranks=self.ranks)
+        return Piece(new_posn, self.owner, self.probabilities)
 
- 
+    def adjust_probabilities(self, ranks):
+        """
+        Dictionary(Rank, Fraction) -> Piece
+
+        Returns a Piece with the Rank probabilities adjusted according
+        to the given ranks Dictionary.
+
+        """
+        new_prob = {}
+        for rank, prob in ranks:
+            if rank in self.ranks:
+                self.denominator = self.denominator - prob
+                if self.ranks[rank] - prob > 0:
+                    new_prob[rank] = self.probability(rank) - prob
+
+        return Piece(self.position, self.owner, new_prob)
+
     def is_stationary(self):
         """
         -> Boolean 
@@ -327,8 +384,19 @@ class Piece:
 
         """
         return (board_layout.is_headquarters(self.position) or
-                len(self.ranks.difference({Rank('L'), Rank('F')})) == 0)
+                self.probability(Rank('L')) + self.probability(Rank('F')) == 1)
 
+    def probability(self, rank):
+        """
+        -> Fraction
+
+        Returns the probability that this piece has the given Rank.
+
+        """
+        if rank in self.probabilities:
+            return self.probabilities[rank]
+        else:
+            return 0
 
     def __eq__(self, piece):
         """
@@ -337,7 +405,7 @@ class Piece:
         Checks if the given Piece is the same as this instance
         """
         return (isinstance(piece, Piece) and
-                self.ranks == piece.ranks and
+                self.probabilities == piece.probabilities and
                 self.position == piece.position and
                 self.owner == piece.owner)
 
@@ -349,7 +417,7 @@ class Piece:
         else:
             owner = "O"
 
-        ranks = "[%s]" % ", ".join([str(rank) for rank in self.ranks])
+        ranks = "[%s]" % ", ".join([str(rank) for rank in self.probabilities])
         return "%c%d %c %s" % (ord('A') + x, y + 1, owner, ranks)
 
     def serialize(self):
@@ -362,5 +430,5 @@ class Piece:
         x = self.position[0]
         y = self.position[1]
         (x, y) = self.position
-        rank = str(next(iter(self.ranks)))
+        rank = str(next(iter(self.probabilities)))
         return "( %c%d %c )" % (ord('A') + x, y + 1, rank)

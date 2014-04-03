@@ -1,6 +1,7 @@
 import unittest
 from app.board import Board, Piece, Owner, Rank, PieceNotFoundException
 from app.message import *
+from fractions import Fraction
 
 
 p1 = Piece((0, 1), Owner.PLAYER, Rank('1'))
@@ -8,6 +9,7 @@ p2 = Piece((0, 0), Owner.PLAYER, Rank('4'))
 opponent = Piece((1,2), Owner.OPPONENT, Rank('8'))
 flag = Piece((0, 1), Owner.PLAYER, Rank('F'))
 landmine = Piece((0, 0), Owner.PLAYER, Rank('L'))
+
 
 class TestRank(unittest.TestCase):
 
@@ -18,8 +20,8 @@ class TestRank(unittest.TestCase):
 
 
 class TestPiece(unittest.TestCase):
-    def test_create_rank_with_set(self):
-        p = Piece((0, 0), Owner.PLAYER, frozenset([Rank('1')]))
+    def test_create_rank_with_dict_of_ranks(self):
+        p = Piece((0, 0), Owner.PLAYER, {Rank('1'): 1})
         self.assertEqual(p.serialize(), "( A1 1 )")
 
     def test_create_rank_with_one_rank(self):
@@ -42,7 +44,9 @@ class TestPiece(unittest.TestCase):
         self.assertTrue(p.is_stationary())
 
     def test_is_stationary_with_non_stationary_pieces(self):
-        p_unknown_rank = Piece((0, 0), Owner.PLAYER, {Rank('F'), Rank('4')})
+        p_unknown_rank = Piece((0, 0), Owner.OPPONENT,
+                               {Rank('F'): Fraction('1/2'),
+                                Rank('4'): Fraction('1/2')})
         self.assertFalse(p1.is_stationary())
         self.assertFalse(p_unknown_rank.is_stationary())
 
@@ -149,6 +153,22 @@ class TestBoard(unittest.TestCase):
     def test_iterate_all_moves_with_landmine_and_flag(self):
         b = Board().place_piece(landmine).place_piece(flag)
         self.assertEqual(list(b.iterate_all_moves(Owner.PLAYER)), [])
+
+    def test_initialize_opponent_pieces(self):
+        b = Board().initialize_opponent_pieces()
+        hq_piece = b.piece_at((1, 11))
+        back_piece = b.piece_at((0, 11))
+        middle_piece = b.piece_at((0, 9))
+        front_piece = b.piece_at((0, 6))
+
+        self.assertEqual(hq_piece.probability(Rank('F')), Fraction('1/2'))
+        self.assertEqual(hq_piece.probability(Rank('L')), Fraction('1/6'))
+        self.assertEqual(hq_piece.probability(Rank('B')), Fraction('1/30'))
+        self.assertEqual(hq_piece.probability(Rank('1')), Fraction('9/190'))
+        self.assertEqual(front_piece.probability(Rank('8')), Fraction('1/19'))
+
+        self.assertEqual(back_piece.probability(Rank('F')), Fraction('0'))
+        self.assertEqual(middle_piece.probability(Rank('L')), Fraction('0'))
 
 if __name__ == '__main__':
     unittest.main()
