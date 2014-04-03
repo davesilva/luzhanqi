@@ -5,9 +5,10 @@ from app.message import *
 
 p1 = Piece((0, 1), Owner.PLAYER, Rank('1'))
 p2 = Piece((0, 0), Owner.PLAYER, Rank('4'))
-opponent = Piece((1,2), Owner.OPPONENT, Rank('8'))
+opponent = Piece((1, 2), Owner.OPPONENT, Rank('8'))
 flag = Piece((0, 1), Owner.PLAYER, Rank('F'))
 landmine = Piece((0, 0), Owner.PLAYER, Rank('L'))
+
 
 class TestRank(unittest.TestCase):
 
@@ -71,7 +72,7 @@ class TestBoard(unittest.TestCase):
     def test_move_piece_nonexistant(self):
         p = Piece((0, 0), Owner.PLAYER, Rank('1'))
         b = Board().place_piece(p).move_piece((0, 0), (0, 1))
-        self.assertRaises(PieceNotFoundException, b.move_piece, (2,1), (3,2))
+        self.assertRaises(PieceNotFoundException, b.move_piece, (2, 1), (3, 2))
 
     def test_remove_piece(self):
         p = Piece((0, 0), Owner.PLAYER, Rank('1'))
@@ -80,7 +81,6 @@ class TestBoard(unittest.TestCase):
         self.assertEqual(mt.serialize(), b.serialize())
 
     def test_remove_piece_nonexistant(self):
-        p = Piece((0, 0), Owner.PLAYER, Rank('1'))
         mt = Board()
         self.assertRaises(PieceNotFoundException, mt.remove_piece, (0, 0))
 

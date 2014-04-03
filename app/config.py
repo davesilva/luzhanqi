@@ -6,8 +6,16 @@ import re
 TIME_REGEX = "^(\d*\.?\d+)m?s$"
 
 parser = OptionParser()
-parser.add_option("-g", "--go", dest="turn", help="specify which player should go first (1 or 2)")
-parser.add_option("-t", "--time/move", dest="time", help="specify the time per move")
+parser.add_option("-g",
+                  "--go",
+                  dest="turn",
+                  help="specify which player should go first (1 or 2)")
+
+parser.add_option("-t",
+                  "--time/move",
+                  dest="time",
+                  help="specify the time per move")
+
 
 class Config:
     # -> Config
