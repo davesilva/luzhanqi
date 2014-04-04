@@ -45,8 +45,8 @@ class TestPiece(unittest.TestCase):
 
     def test_is_stationary_with_non_stationary_pieces(self):
         p_unknown_rank = Piece((0, 0), Owner.OPPONENT,
-                               {Rank('F'): Fraction('1/2'),
-                                Rank('4'): Fraction('1/2')})
+                               {Rank('F'): 1, Rank('4'): 1},
+                               {Rank('F'): 2, Rank('4'): 1})
         self.assertFalse(p1.is_stationary())
         self.assertFalse(p_unknown_rank.is_stationary())
 
