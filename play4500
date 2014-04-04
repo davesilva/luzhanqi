@@ -24,12 +24,20 @@ COMPUTING = True
 # actually computing the next best move
 ADJUST = .2
 
-def next_best_move(aboard, alom):
+# the actual game_board
+game_board = ()
+
+def next_best_move():
     global NEXT_BEST
+    global game_board
     while COMPUTING:
-        NEXT_BEST = aboard.next_best_move(alom) 
+        lmoves = game_board.iterate_all_moves(board.Owner.PLAYER)
+        lmoves = list(lmoves)
+        rand_idx = random.randint(0, len(lmoves) - 1)
+        NEXT_BEST = lmoves[rand_idx] 
 
 def main():
+    global game_board
     # Initial configuration
     config = Config()
     init_board = board_parser.parse_board()
@@ -61,15 +69,11 @@ def main():
 
             if msg.player == config.turn:
                 continue
-            list_of_moves = game_board.iterate_all_moves(board.Owner.PLAYER)
-            compute_thread = treading.Thread(target=next_best_move, args=(game_board, list_of_moves))
-            #compute_thread.start()
-            #compute_thread.join((config.time / 1000) - ADJUST)
-            #COMPUTING = False
-            #next_move = NEXT_BEST
-            list_of_moves = list(list_of_moves)
-            rand_idx = random.randint(0, len(list_of_moves) - 1)
-            next_move = list_of_moves[rand_idx]
+            compute_thread = threading.Thread(target=next_best_move)
+            compute_thread.start()
+            compute_thread.join((config.time / 1000) - ADJUST)
+            COMPUTING = False
+            next_move = NEXT_BEST
             mov_msg = message.MoveMessage(next_move[0], next_move[1])
             io.send(mov_msg)
         elif isinstance(msg, message.FlagMessage):
