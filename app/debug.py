@@ -1,3 +1,6 @@
+from sys import stderr
+
+
 def assert_all_probabilities_sum_to_one(board):
     """
     Board ->
@@ -20,4 +23,8 @@ def assert_piece_probabilities_sum_to_one(piece):
 
     """
 
-    assert(sum(piece.probability(rank) for rank in piece.ranks()) == 1)
+    prob_sum = sum(piece.probability(rank) for rank in piece.ranks())
+    if not prob_sum == 1:
+        print("Probability sum for %s is %s" %
+              (str(piece), str(prob_sum)), file=stderr)
+        assert(False)
