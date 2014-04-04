@@ -1,6 +1,7 @@
 import copy
 import logging
 import app.board_layout as board_layout
+import itertools
 
 """
 A Position is a tuple of Numbers (row, column)
@@ -156,6 +157,56 @@ class Board:
         i = iter(self.pieces_list)
         return filter(lambda p: p.owner == owner, i)
 
+    def iterate_railroad_moves(self, piece):
+        p = piece.position
+        beginyp = (p[0], p[1] + 1)
+        beginyn = (p[0], p[1] - 1)
+        beginxp = (p[0] + 1, p[1])
+        beginxn = (p[0] - 1, p[1])
+        if board_layout.in_range_y(beginyp) and \
+            board_layout.is_on_railroad(beginyp) and \
+            not self.is_space_blocked_for(beginyp, piece.owner):
+            yx = beginyp[0]
+            yy = beginyp[1] + 1
+            while board_layout.in_range_y((yx, yy)) and \
+                board_layout.is_on_railroad((yx, yy)) and \
+                not self.is_space_blocked_for((yx, yy), piece.owner):
+                yield (yx, yy)
+                yy += 1
+
+        if board_layout.in_range_y(beginyn) and \
+            board_layout.is_on_railroad(beginyn) and \
+            not self.is_space_blocked_for(beginyn, piece.owner):
+            yx = beginyn[0]
+            yy = beginyn[1] - 1
+            while board_layout.in_range_y((yx, yy)) and \
+                    board_layout.is_on_railroad((yx, yy)) and \
+                    not self.is_space_blocked_for((yx, yy), piece.owner):
+                yield (yx, yy)
+                yy -= 1
+
+        if board_layout.in_range_x(beginxp) and \
+                board_layout.is_on_railroad(beginxp) and \
+                not self.is_space_blocked_for(beginxp, piece.owner):
+            xx = beginxp[0] + 1
+            xy = beginxp[1]
+            while board_layout.in_range_x((xx, xy)) and \
+                    board_layout.is_on_railroad((xx, xy)) and \
+                    not self.is_space_blocked_for((xx, xy), piece.owner):
+                yield (xx, xy)
+                xx += 1
+
+        if board_layout.in_range_x(beginxn) and \
+                board_layout.is_on_railroad(beginxn) and \
+                not self.is_space_blocked_for(beginxn, piece.owner):
+            xx = beginxp[0] - 1
+            xy = beginxp[1]
+            while board_layout.in_range_x((xx, xy)) and \
+                    board_layout.is_on_railroad((xx, xy)) and \
+                    not self.is_space_blocked_for((xx, xy), piece.owner):
+                yield (xx, xy)
+                xx -= 1
+
     def iterate_moves_for_piece(self, piece):
         """
         Piece -> [Generator_of Position]
@@ -174,9 +225,16 @@ class Board:
             return iter([])
 
         i = board_layout.iterate_adjacent(piece.position)
+
         # Make sure we exclude blocked spaces
         i = filter(lambda m: not self.is_space_blocked_for(m, piece.owner), i)
-        return i
+       
+        r = iter([])
+        # Railroad moves
+        if board_layout.is_on_railroad(piece.position):
+            r = self.iterate_railroad_moves(piece)
+
+        return itertools.chain(i, r)
 
     def iterate_all_moves(self, owner):
         """

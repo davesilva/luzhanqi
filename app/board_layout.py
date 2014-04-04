@@ -43,6 +43,12 @@ class Space:
         return iter(self.adjacent)
 
 
+def in_range_x(p):
+    return p[0] >= 0 and p[0] < _WIDTH 
+
+def in_range_y(p):
+    return p[1] >= 0 and p[1] < _HEIGHT 
+
 def is_adjacent(v1, v2):
     """
     Position Position -> Boolean
@@ -60,6 +66,15 @@ def is_camp(p):
 
     """
     return _board_graph[p].space_type == CAMP
+
+def is_on_railroad(p):
+    """
+    Position -> Boolean 
+
+    Checks if the give position is on a railroad
+
+    """
+    return _board_graph[p].on_railroad
 
 def is_headquarters(p):
     """
