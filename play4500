@@ -30,11 +30,11 @@ game_board = ()
 def next_best_move():
     global NEXT_BEST
     global game_board
-    while COMPUTING:
-        lmoves = game_board.iterate_all_moves(board.Owner.PLAYER)
-        lmoves = list(lmoves)
-        rand_idx = random.randint(0, len(lmoves) - 1)
-        NEXT_BEST = lmoves[rand_idx] 
+    lmoves = game_board.iterate_all_moves(board.Owner.PLAYER)
+    #while COMPUTING:
+    lmoves = list(lmoves)
+    rand_idx = random.randint(0, len(lmoves) - 1)
+    NEXT_BEST = lmoves[rand_idx] 
 
 def main():
     global game_board
