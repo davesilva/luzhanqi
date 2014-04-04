@@ -50,6 +50,9 @@ class TestPiece(unittest.TestCase):
         self.assertFalse(p1.is_stationary())
         self.assertFalse(p_unknown_rank.is_stationary())
 
+    def _assert_probabilities_sum_to_one(self, probabilities):
+        self.assertEqual(sum(probabilities.values()), 1)
+
 
 class TestBoard(unittest.TestCase):
     def test_serialize_empty_board(self):
@@ -163,8 +166,10 @@ class TestBoard(unittest.TestCase):
 
         self.assertEqual(hq_piece.probability(Rank('F')), Fraction('1/2'))
         self.assertEqual(hq_piece.probability(Rank('L')), Fraction('1/6'))
-        self.assertEqual(hq_piece.probability(Rank('B')), Fraction('1/30'))
-        self.assertEqual(hq_piece.probability(Rank('1')), Fraction('9/190'))
+        self.assertEqual(hq_piece.probability(Rank('B')), Fraction('1/24'))
+        self.assertEqual(hq_piece.probability(Rank('1')), Fraction('21/456'))
+        self.assertEqual(hq_piece.probability(Rank('7')), Fraction('14/456'))
+        self.assertEqual(hq_piece.probability(Rank('8')), Fraction('7/456'))
         self.assertEqual(front_piece.probability(Rank('8')), Fraction('1/19'))
 
         self.assertEqual(back_piece.probability(Rank('F')), Fraction('0'))
