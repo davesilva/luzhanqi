@@ -457,6 +457,7 @@ class Piece:
         possible ranks, and returns the modified Piece.
 
         """
+        ranks = set(ranks)
         ranks_to_remove = ranks.difference(self.prob_numerators.keys())
         soldiers_to_remove = len(ranks_to_remove.intersection(SOLDIER_RANKS))
         ranks_to_keep = ranks.intersection(self.prob_numerators.keys())
@@ -488,6 +489,7 @@ class Piece:
         board when using exclude_ranks.
 
         """
+        excluded_ranks = set(excluded_ranks)
         ranks_removed = excluded_ranks.difference(self.prob_numerators.keys())
         ranks_kept = excluded_ranks.intersection(self.prob_denominators.keys())
         new_numerators = {}
