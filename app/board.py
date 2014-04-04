@@ -348,7 +348,8 @@ class Board:
 
         ranks_to_exclude = []
         for rank in opponent_piece.prob_numerators:
-            if not rank.attack_outcome(player_piece.rank) == attack_result:
+            if not (rank.attack_outcome(player_piece.get_rank()) ==
+                    attack_result):
                 ranks_to_exclude.append(rank)
 
         return self.exclude_ranks(opponent_piece, ranks_to_exclude)
