@@ -30,7 +30,7 @@ game_board = ()
 def next_best_move():
     global NEXT_BEST
     global game_board
-    time.sleep(1)
+    time.sleep(.5)
     lmoves = game_board.iterate_all_moves(board.Owner.PLAYER)
     #while COMPUTING:
     lmoves = list(lmoves)
