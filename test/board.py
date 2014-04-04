@@ -50,9 +50,6 @@ class TestPiece(unittest.TestCase):
         self.assertFalse(p1.is_stationary())
         self.assertFalse(p_unknown_rank.is_stationary())
 
-    def _assert_probabilities_sum_to_one(self, probabilities):
-        self.assertEqual(sum(probabilities.values()), 1)
-
 
 class TestBoard(unittest.TestCase):
     def test_serialize_empty_board(self):

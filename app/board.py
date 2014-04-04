@@ -347,7 +347,7 @@ class Board:
         assert(attack_result in ["win", "loss", "tie"])
 
         ranks_to_exclude = []
-        for rank in opponent_piece.prob_numerators:
+        for rank in opponent_piece.ranks():
             if not (rank.attack_outcome(player_piece.get_rank()) ==
                     attack_result):
                 ranks_to_exclude.append(rank)
@@ -458,9 +458,9 @@ class Piece:
 
         """
         ranks = set(ranks)
-        ranks_to_remove = ranks.difference(self.prob_numerators.keys())
+        ranks_to_remove = ranks.difference(self.ranks())
         soldiers_to_remove = len(ranks_to_remove.intersection(SOLDIER_RANKS))
-        ranks_to_keep = ranks.intersection(self.prob_numerators.keys())
+        ranks_to_keep = ranks.intersection(self.ranks())
         new_numerators = {}
         new_denominators = {}
 
@@ -490,8 +490,8 @@ class Piece:
 
         """
         excluded_ranks = set(excluded_ranks)
-        ranks_removed = excluded_ranks.difference(self.prob_numerators.keys())
-        ranks_kept = excluded_ranks.intersection(self.prob_denominators.keys())
+        ranks_removed = excluded_ranks.difference(set(self.ranks()))
+        ranks_kept = excluded_ranks.intersection(set(self.ranks()))
         new_numerators = {}
         new_denominators = {}
 
@@ -536,8 +536,7 @@ class Piece:
         Returns the probability that this piece has the given Rank.
 
         """
-        if (not rank in self.prob_numerators or
-                not rank in self.prob_denominators):
+        if not rank in self.ranks():
             return Fraction(0)
 
         probability = Fraction(self.prob_numerators[rank],
@@ -604,7 +603,7 @@ class Piece:
             owner = "O"
 
         ranks = "[%s]" % ", ".join(
-            [str(rank) for rank in self.prob_numerators])
+            [str(rank) for rank in self.ranks()])
         return "%c%d %c %s" % (ord('A') + x, y + 1, owner, ranks)
 
     def serialize(self):
@@ -629,7 +628,17 @@ class Piece:
 
         """
         assert(self.owner == Owner.PLAYER)
-        return next(iter(self.prob_numerators))
+        return next(self.ranks())
+
+    def ranks(self):
+        """
+        -> Generator_of(Rank)
+
+        Returns an iterator which will iterate over all of this
+        piece's possible ranks.
+
+        """
+        return iter(self.prob_numerators.keys())
 
 
 def _initial_probability_for(position):

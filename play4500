@@ -7,6 +7,7 @@ import app.message as message
 import app.io as io
 import app.board as board
 import app.logging_config
+import app.debug as debug
 import random
 
 # our first move, a tuple of tuples (from, to)
@@ -38,6 +39,7 @@ def main():
         if isinstance(msg, message.MoveMessage):
             game_board = game_board.update(msg)
             game_board.dump_debug_board()
+            debug.assert_all_probabilities_sum_to_one(game_board)
 
             # Pretty print the board (for debugging)
             pp.draw_message(msg)
