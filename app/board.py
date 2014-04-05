@@ -464,6 +464,8 @@ class Piece:
         new_numerators = {}
         new_denominators = {}
 
+        log.debug("exclude_ranks(%s, %s)" % (self, ranks))
+
         for rank in ranks_to_keep:
             if rank in SOLDIER_RANKS:
                 new_numerators[rank] = self.prob_numerators[rank]
