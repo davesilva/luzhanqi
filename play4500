@@ -38,11 +38,15 @@ def next_best_move():
 
     all_moves = game_board.iterate_all_moves(board.Owner.PLAYER)
     while computing:
-        for move in all_moves:
-            weight = random.randint(0, 100)
-            if weight > best_move_weight:
-                best_move = move
-                best_move_weight = weight
+        try:
+            move = next(all_moves)
+        except StopIteration:
+            return
+
+        weight = random.randint(0, 100)
+        if weight > best_move_weight:
+            best_move = move
+            best_move_weight = weight
 
 def main():
 
