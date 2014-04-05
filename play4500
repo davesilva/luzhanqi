@@ -39,7 +39,9 @@ def next_best_move():
 
     computing = True
     all_moves = game_board.iterate_all_moves(board.Owner.PLAYER)
-    
+    best_move = next(all_moves)
+    best_move_weight = random.randint(0, 100)
+
     while computing:
         try:
             move = next(all_moves)
