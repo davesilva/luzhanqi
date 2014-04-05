@@ -50,6 +50,15 @@ class TestPiece(unittest.TestCase):
         self.assertFalse(p1.is_stationary())
         self.assertFalse(p_unknown_rank.is_stationary())
 
+    def test_exclude_ranks_with_front_row_piece(self):
+        b = Board().initialize_opponent_pieces()
+        p_before = b.piece_at((0, 6))
+        p_after = p_before.exclude_ranks({Rank('1'), Rank('2'), Rank('3'),
+                                          Rank('4'), Rank('5'), Rank('6')})
+
+        self.assertEqual(p_after.probability(Rank('1')), 0)
+        self.assertEqual(p_after.probability(Rank('9')), Fraction('1/13'))
+
 
 class TestBoard(unittest.TestCase):
     def test_serialize_empty_board(self):

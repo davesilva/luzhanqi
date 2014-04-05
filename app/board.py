@@ -457,14 +457,11 @@ class Piece:
         possible ranks, and returns the modified Piece.
 
         """
-        ranks = set(ranks)
-        ranks_to_remove = ranks.difference(self.ranks())
+        ranks_to_remove = set(ranks)
         soldiers_to_remove = len(ranks_to_remove.intersection(SOLDIER_RANKS))
-        ranks_to_keep = ranks.intersection(self.ranks())
+        ranks_to_keep = set(self.ranks()).difference(ranks_to_remove)
         new_numerators = {}
         new_denominators = {}
-
-        log.debug("exclude_ranks(%s, %s)" % (self, ranks))
 
         for rank in ranks_to_keep:
             if rank in SOLDIER_RANKS:
