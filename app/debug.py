@@ -1,5 +1,6 @@
 import logging
-log = logging.getLogger("probability")
+
+DEBUGGING = True
 
 
 def assert_all_probabilities_sum_to_one(board):
@@ -10,6 +11,9 @@ def assert_all_probabilities_sum_to_one(board):
     for all pieces on the given board.
 
     """
+
+    if not DEBUGGING:
+        return
 
     for piece in board.pieces_list:
         assert_piece_probabilities_sum_to_one(piece)
@@ -24,6 +28,11 @@ def assert_piece_probabilities_sum_to_one(piece):
 
     """
 
+    if not DEBUGGING:
+        return
+
     prob_sum = sum(piece.probability(rank) for rank in piece.ranks())
     if not prob_sum == 1:
-        log.info("Probability sum for %s is %s" % (str(piece), str(prob_sum)))
+        log = logging.getLogger("probability")
+        log.error("Probability sum for %s is %s" % (str(piece), str(prob_sum)))
+        assert(False)

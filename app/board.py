@@ -1,7 +1,7 @@
 import copy
 import logging
 import app.board_layout as board_layout
-from fractions import Fraction, gcd
+from fractions import Fraction
 
 """
 A Position is a tuple of Numbers (row, column)
@@ -371,8 +371,9 @@ class Board:
         for p in self.pieces_list:
             if p == piece:
                 new_list.append(new_piece)
-            #elif p.owner == piece.owner:
-            #    new_list.append(p.adjust_probabilities(piece, ranks))
+            # TODO: Adjust probabilities for the other pieces
+            # elif p.owner == piece.owner:
+            #     new_list.append(p.adjust_probabilities(piece, ranks))
             else:
                 new_list.append(p)
 
