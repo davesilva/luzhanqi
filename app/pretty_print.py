@@ -3,7 +3,7 @@
 import app.board as board
 import app.logging_config as logconfig
 from app.config import Config
-import sys, os
+import os
 
 # Borders #
 VERT_L = "│"
@@ -22,7 +22,8 @@ WIDTH = 4
 
 topline = CUPLEFT + (HORZ_L * WIDTH + T_UP) * 11 + HORZ_L * WIDTH + CUPRIGHT
 midline = WRDRIGHT + (HORZ_L * WIDTH + CROSS) * 11 + HORZ_L * WIDTH + WRDLEFT
-botline = CDWNLEFT + (HORZ_L * WIDTH + T_DOWN) * 11 + HORZ_L * WIDTH + CDWNRIGHT
+botline = (CDWNLEFT + (HORZ_L * WIDTH + T_DOWN) * 11
+           + HORZ_L * WIDTH + CDWNRIGHT)
 
 config = Config()
 
