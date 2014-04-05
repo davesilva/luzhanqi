@@ -458,16 +458,19 @@ class Piece:
 
         """
         ranks_to_remove = set(ranks)
-        soldiers_to_remove = len(ranks_to_remove.intersection(SOLDIER_RANKS))
         ranks_to_keep = set(self.ranks()).difference(ranks_to_remove)
         new_numerators = {}
         new_denominators = {}
+
+        num_soldiers_to_remove = 0
+        for rank in ranks_to_remove.intersection(SOLDIER_RANKS):
+            num_soldiers_to_remove += self.prob_numerators[rank]
 
         for rank in ranks_to_keep:
             if rank in SOLDIER_RANKS:
                 new_numerators[rank] = self.prob_numerators[rank]
                 new_denominators[rank] = (self.prob_denominators[rank]
-                                          - soldiers_to_remove)
+                                          - num_soldiers_to_remove)
             else:
                 new_numerators[rank] = self.prob_numerators[rank]
                 new_denominators[rank] = self.prob_denominators[rank]

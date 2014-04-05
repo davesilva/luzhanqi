@@ -53,11 +53,12 @@ class TestPiece(unittest.TestCase):
     def test_exclude_ranks_with_front_row_piece(self):
         b = Board().initialize_opponent_pieces()
         p_before = b.piece_at((0, 6))
-        p_after = p_before.exclude_ranks({Rank('1'), Rank('2'), Rank('3'),
-                                          Rank('4'), Rank('5'), Rank('6')})
+        p_after = p_before.exclude_ranks({Rank(str(r)) for r in range(1, 7)})
 
         self.assertEqual(p_after.probability(Rank('1')), 0)
-        self.assertEqual(p_after.probability(Rank('9')), Fraction('1/13'))
+        self.assertEqual(p_after.probability(Rank('7')), Fraction('1/2'))
+        self.assertEqual(p_after.probability(Rank('8')), Fraction('1/4'))
+        self.assertEqual(p_after.probability(Rank('9')), Fraction('1/4'))
 
 
 class TestBoard(unittest.TestCase):
