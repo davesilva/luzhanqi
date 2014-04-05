@@ -15,10 +15,13 @@ import time
 FIRST_MOVE = ((2,1),(3,2))
 
 # next best move
-NEXT_BEST = ()
+best_move = None
+
+# weight of the best move
+best_move_weight = 0
 
 # Should the thread keep going
-COMPUTING = True
+computing = True
 
 # Time required for doing other stuff not related to
 # actually computing the next best move
@@ -27,28 +30,32 @@ ADJUST = .2
 # the actual game_board
 game_board = ()
 
+
 def next_best_move():
     global NEXT_BEST
     global game_board
     time.sleep(.5)
-    lmoves = game_board.iterate_all_moves(board.Owner.PLAYER)
-    #while COMPUTING:
-    lmoves = list(lmoves)
-    rand_idx = random.randint(0, len(lmoves) - 1)
-    NEXT_BEST = lmoves[rand_idx] 
+    all_moves = game_board.iterate_all_moves(board.Owner.PLAYER)
+    while COMPUTING:
+        for move in all_moves:
+            weight = random.randint(0, 100)
+            if weight > best_move_weight:
+                best_move = move
+                best_move_weight = weight
 
 def main():
-    global game_board
+
     # Initial configuration
     config = Config()
     init_board = board_parser.parse_board()
 
-    # Initial Message (i.e initial board)
+    # Initial Message (i.e initial setup)
     init_msg = message.InitMessage(init_board)
 
     io.send(init_msg)
 
     game_board = init_board
+
     # If we are going first, print the first move
     if config.turn == 1:
         mov_msg = message.MoveMessage(FIRST_MOVE[0], FIRST_MOVE[1])
@@ -73,12 +80,11 @@ def main():
             compute_thread = threading.Thread(target=next_best_move)
             compute_thread.start()
             compute_thread.join((config.time / 1000) - ADJUST)
-            COMPUTING = False
-            next_move = NEXT_BEST
-            mov_msg = message.MoveMessage(next_move[0], next_move[1])
+            computing = False
+            mov_msg = message.MoveMessage(best_move[0], best_move[1])
             io.send(mov_msg)
         elif isinstance(msg, message.FlagMessage):
-            #board.set_flag(msg.pos)
+            #game_board.set_flag(msg.pos)
             continue
         elif isinstance(msg, message.WinningMessage):
             break
