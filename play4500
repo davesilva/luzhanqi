@@ -35,8 +35,11 @@ def next_best_move():
     global best_move
     global best_move_weight
     global game_board
+    global computing 
 
+    computing = True
     all_moves = game_board.iterate_all_moves(board.Owner.PLAYER)
+    
     while computing:
         try:
             move = next(all_moves)
@@ -51,6 +54,7 @@ def next_best_move():
 def main():
 
     global game_board
+    global computing
 
     # Initial configuration
     config = Config()
