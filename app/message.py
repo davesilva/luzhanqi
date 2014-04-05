@@ -162,6 +162,21 @@ class InitMessage(Message):
         """
         return self.board.serialize()
 
+class ForfeitMessage(Message):
+    """
+        Forfeit Message
+    """
+
+    def __init__(self):
+        pass
+
+    def serialize(self):
+        """
+        -> String
+
+        Serialize this ForfeitMessage.
+        """
+        return "forfeit"
 
 class MoveMessage(Message):
     """
