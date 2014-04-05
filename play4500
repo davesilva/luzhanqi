@@ -36,7 +36,7 @@ def next_best_move():
     global best_move
     global best_move_weight
     global game_board
-    global computing 
+    global computing
     global forfeit
 
     computing = True
