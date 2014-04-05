@@ -32,11 +32,12 @@ game_board = ()
 
 
 def next_best_move():
-    global NEXT_BEST
+    global best_move
+    global best_move_weight
     global game_board
-    time.sleep(.5)
+
     all_moves = game_board.iterate_all_moves(board.Owner.PLAYER)
-    while COMPUTING:
+    while computing:
         for move in all_moves:
             weight = random.randint(0, 100)
             if weight > best_move_weight:
@@ -44,6 +45,8 @@ def next_best_move():
                 best_move_weight = weight
 
 def main():
+
+    global game_board
 
     # Initial configuration
     config = Config()
