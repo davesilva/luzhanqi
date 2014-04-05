@@ -3,15 +3,17 @@ from app.board_layout import *
 
 # Note that we are ONLY considering movable pieces i.e. no landmines or flags
 # May need to consider the case of a movable piece placed in hq?
-RANK_WORTH = {1:2, 2:2, 3:3, 4:4, 5:5, 6:6, 7:7, 8:8, 9:9, 'B':9}
+RANK_WORTH = {1:2, 2:2, 3:3, 4:4, 5:5, 6:6, 7:7, 8:8, 9:9, 'B':5}
+
 RANK_INIT_AMT = {1:3, 2:3, 3:3, 4:2, 5:2, 6:2, 7:2, 8:1, 9:1, 'B':2}
 
+# Factors should all up to 1
 WORTH_FACTOR = 0.3
 LOSING_PIECE_FACTOR = 0.3
-COMMONALITY_FACTOR = 0.1
-PROXIMITY_FACTOR = 0.2
+COMMONALITY_FACTOR = 0.05
+PROXIMITY_FACTOR = 0.25
 BRAVE_FACTOR = 0.1
-
+ 
 def get_rank(p):
 	return next(iter(piece.ranks))
 
@@ -22,11 +24,11 @@ def action_value(board, src, dest):
 	Returns the value of an action 
 	"""
 	return \
-	piece_worth(board, src) * \
-	prob_losing(board, src, dest) + \
-	piece_commonality_rating(board, src) + \
-	proximity_rating(board, src, dest) + \
-	brave_rating() 
+	WORTH_FACTOR * piece_worth(board, src) + \
+	LOSING_PIECE_FACTOR * prob_losing(board, src, dest) + \
+	COMMONALITY_FACTOR * piece_commonality_rating(board, src) + \
+	PROXIMITY_FACTOR * proximity_rating(board, src, dest) + \
+	BRACE_FACTOR * brave_rating() 
 
 	# Consider these in ratios!
 
@@ -42,7 +44,8 @@ def piece_worth(board, pos):
 	return RANK_WORTH[rank] / (max - min)
 
 def prob_losing(board, src, dest):
-	pass
+	# TODO 
+	return 0.5
 
 def piece_commonality_rating(board, src):
 	"""
@@ -52,7 +55,7 @@ def piece_commonality_rating(board, src):
 	"""
 	max = 2
 	min = 2/3
-	lop = board.iterate_pieces(Owner.PLAYER))
+	lop = board.iterate_pieces(Owner.PLAYER)
 	num_same_pieces = len(filter(lambda p: p == src, lop))
 	rarity_rating = RANK_INIT_AMT[get_rank(p)] / 3
 	rating = (num_same_pieces/num_orig) + num_same_pieces
@@ -72,7 +75,7 @@ def proximity_rating(board, src, dest):
 	else:
 		return dest[0] / (max - min)
 
-def brave_rating(board, pos):
+def tradeoff_rating(board, pos):
 	"""
 	Board Position -> Number
 	Determines how brave the piece can be by 
@@ -81,7 +84,8 @@ def brave_rating(board, pos):
 	"""
 	subj_worth = RANK_WORTH[get_rank(pos)]
 	lop = board.iterate_pieces(Owner.PLAYER)
-	higher_worth_pieces = filter(lambda p: RANK_WORTH[get_rank(p)] >= subj_worth, lop)
+	higher_worth_pieces = filter(lambda p: RANK_WORTH[get_rank(p)] \
+		                                   >= subj_worth, lop)
 	num_higher_worth_pieces = len(higher_worth_pieces)
 	return num_higher_worth_pieces / (max - min)
 
