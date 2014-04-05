@@ -1,6 +1,7 @@
 import unittest
 from app.message import *
 
+
 class TestMessage(unittest.TestCase):
 
     def test_pos_to_tuple(self):
@@ -20,7 +21,10 @@ class TestMessage(unittest.TestCase):
 
     """
     Invalid Board Move <moveErrorType>
-    <moveErrorType> ::= "Piece not movable" | "No Piece" | "From To Invalid" | "Location Invalid"
+    <moveErrorType> ::= "Piece not movable" |
+                        "No Piece" |
+                        "From To Invalid" |
+                        "Location Invalid"
     """
     def testDeserializeInvalidMove1(self):
         d1 = deserialize("Invalid Board Move Piece not movable")
@@ -46,16 +50,16 @@ class TestMessage(unittest.TestCase):
     <position 1> <position 2> <player> <movetype>
     <player> ::= "1" | "2"
     <movetype> ::= "move" | "win" | "loss" | "tie"
-    """ 
+    """
 
     def testDeserializeReceiveMove1(self):
         d1 = deserialize("A1 A1 1 move")
-        d2 = MoveMessage((0,0), (0,0), 1, "move")
+        d2 = MoveMessage((0, 0), (0, 0), 1, "move")
         self.assertEqual(d1, d2)
 
     def testDeserializeReceiveMove2(self):
         d1 = deserialize("A2 E3 2 win")
-        d2 = MoveMessage((0,1), (4,2), 2, "win")
+        d2 = MoveMessage((0, 1), (4, 2), 2, "win")
         self.assertEqual(d1, d2)
 
     def testDeserializeReceiveMove3(self):
@@ -81,12 +85,12 @@ class TestMessage(unittest.TestCase):
     <winningPlayer> ::= "1" | "2" | "No"
     """
 
-    def testDeserializeWinningMessage(self):
+    def testDeserializeWinningMessage1(self):
         d1 = deserialize("1 Victory")
         d2 = WinningMessage("1")
         self.assertEqual(d1, d2)
 
-    def testDeserializeWinningMessage(self):
+    def testDeserializeWinningMessage2(self):
         d1 = deserialize("No Victory")
         d2 = WinningMessage("No")
         self.assertEqual(d1, d2)

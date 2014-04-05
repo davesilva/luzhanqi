@@ -12,7 +12,7 @@ log = logging.getLogger("board")
 class Rank:
     """
     Instance variables:
-    Char rank 
+    Char rank
 
     """
 
@@ -20,7 +20,7 @@ class Rank:
         """
         Char -> Rank
 
-        Constructs a Rank with the given rank 
+        Constructs a Rank with the given rank
 
         """
         self.rank = rank
@@ -29,9 +29,10 @@ class Rank:
         """
         -> String
 
-        Returns a human readable string of this Rank 
+        Returns a human readable string of this Rank
 
         >>> print(Rank('L'))
+
         L
 
         """
@@ -42,7 +43,7 @@ class Rank:
         -> Rank
 
         Checks if this is equal to the given Rank by comparing
-        self.rank for equality. 
+        self.rank for equality.
 
         """
         return self.rank == other.rank
@@ -51,7 +52,7 @@ class Rank:
         """
         -> Number
 
-        Hashes this instance. 
+        Hashes this instance.
 
         """
         return hash(self.rank)
@@ -62,12 +63,15 @@ class Owner:
     PLAYER = 0
     OPPONENT = 1
 
+
 class PieceNotFoundException(Exception):
+
     def __init__(self, msg):
         self.msg = msg
 
     def __str__(self):
         return repr(self.msg)
+
 
 class Board:
     """
@@ -79,8 +83,7 @@ class Board:
     def __init__(self, pieces_list=[]):
         """
         [Listof Piece] -> Board
-
-        Constructs a Board with the specified list of pieces. 
+        Constructs a Board with the specified list of pieces.
 
         """
         self.pieces_list = pieces_list
@@ -89,7 +92,7 @@ class Board:
         """
         Piece -> Board
 
-        Adds the given piece to this Board for initial setup. 
+        Adds the given piece to this Board for initial setup.
 
         """
         new_list = copy.copy(self.pieces_list)
@@ -98,9 +101,9 @@ class Board:
 
     def move_piece(self, src, dest):
         """
-        Position Position -> Board 
+        Position Position -> Board
 
-        Moves the piece at the src position to the dest position. 
+        Moves the piece at the src position to the dest position.
 
         """
         piece = self.piece_at(src)
@@ -114,14 +117,14 @@ class Board:
 
             return Board(new_list)
         else:
-            raise PieceNotFoundException("Cannot move piece from ( %c%d )" \
-                    %(ord('A') + src[0], src[1] + 1))
+            raise PieceNotFoundException("Cannot move piece from ( %c%d )"
+                                         % (ord('A') + src[0], src[1] + 1))
 
     def piece_at(self, position):
         """
         Position -> (Piece | None)
 
-        Returns the piece at the given position. 
+        Returns the piece at the given position.
 
         """
         return next(
@@ -129,12 +132,12 @@ class Board:
 
     def is_space_blocked_for(self, position, owner):
         """
-        Position Owner -> Boolean 
+        Position Owner -> Boolean
 
         Checks if the given position
         - can be moved into by the given player
         - contains an opponent's piece that can be attacked but only if
-        the given position is not a camp 
+        the given position is not a camp
 
         """
 
@@ -160,15 +163,15 @@ class Board:
         """
         Piece -> [Generator_of Position]
 
-        Returns a generator for all possible moves that can 
-        be made by the given piece. A move is a position that the given 
-        piece can consider for relocation or attack. 
+        Returns a generator for all possible moves that can
+        be made by the given piece. A move is a position that the given
+        piece can consider for relocation or attack.
 
         """
-        # TODO: if given piece is an engineer, also need to consider 
+        # TODO: if given piece is an engineer, also need to consider
         # railway positions i.e. not just adjacent pieces
         # The paths to these positions should also not be blocked by
-        # the player/opponent's pieces. 
+        # the player/opponent's pieces.
 
         if piece.is_stationary():
             return iter([])
@@ -180,10 +183,10 @@ class Board:
 
     def iterate_all_moves(self, owner):
         """
-        Owner -> [Generator_of (Position, Position)] 
+        Owner -> [Generator_of (Position, Position)]
 
         Returns a generator for all possible moves that can be made
-        by the given player. A move is a tuple of positions 
+        by the given player. A move is a tuple of positions
         (position_from, position_to). The piece at position_from belongs to
         the given player and is allowed to relocate to position_to or attack
         a piece that is currently present at position_to
@@ -197,7 +200,7 @@ class Board:
         """
         -> String
 
-        Serialize this Board. 
+        Serialize this Board.
 
         """
         return ("( " +
@@ -210,7 +213,7 @@ class Board:
         """
         Position -> Board
 
-        Removes the piece at the given position from the Board. 
+        Removes the piece at the given position from the Board.
 
         """
         piece = self.piece_at(pos)
@@ -225,11 +228,11 @@ class Board:
 
     def update(self, msg):
         """
-        MoveMessage -> Board 
+        MoveMessage -> Board
 
         Move pieces if a "move" or "win" is indicated by the given
-        MoveMessage, otherwise if a "loss" or "tie" is indicated, 
-        then remove pieces appropriately. 
+        MoveMessage, otherwise if a "loss" or "tie" is indicated,
+        then remove pieces appropriately.
 
         """
         move_type = msg.movetype
@@ -295,7 +298,7 @@ class Piece:
         Position Owner <Set(Rank)> -> Piece
 
         Constructs an instance of Piece initialized with its position,
-        owner and set of all possible ranks. 
+        owner and set of all possible ranks.
 
         """
         # Number tuple (row, column)
@@ -312,27 +315,25 @@ class Piece:
         """
         Position -> Piece
 
-        Returns a hard copy of this instance with a changed position. 
+        Returns a hard copy of this instance with a changed position.
 
         """
         return Piece(new_posn, self.owner, ranks=self.ranks)
 
- 
     def is_stationary(self):
         """
-        -> Boolean 
+        -> Boolean
 
         Returns true if this piece cannot be moved i.e. if it is a flag
-        or a landmine or positioned at a headquarter. 
+        or a landmine or positioned at a headquarter.
 
         """
         return (board_layout.is_headquarters(self.position) or
                 len(self.ranks.difference({Rank('L'), Rank('F')})) == 0)
 
-
     def __eq__(self, piece):
         """
-        Piece -> Boolean 
+        Piece -> Boolean
 
         Checks if the given Piece is the same as this instance
         """
