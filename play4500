@@ -8,22 +8,70 @@ import app.io as io
 import app.board as board
 import app.logging_config
 import random
+import threading
+import time
 
 # our first move, a tuple of tuples (from, to)
 FIRST_MOVE = ((2,1),(3,2))
 
+# next best move
+best_move = None
+
+# weight of the best move
+best_move_weight = 0
+
+# Should the thread keep going
+computing = True
+
+# Time required for doing other stuff not related to
+# actually computing the next best move
+ADJUST = .2
+
+# the actual game_board
+game_board = ()
+
+forfeit = False
+
+def next_best_move():
+    global best_move
+    global best_move_weight
+    global game_board
+    global computing
+    global forfeit
+
+    computing = True
+    all_moves = game_board.iterate_all_moves(board.Owner.PLAYER)
+    best_move = next(all_moves)
+    best_move_weight = random.randint(0, 100)
+
+    while computing:
+        try:
+            move = next(all_moves)
+        except StopIteration:
+            forfeit = True
+            return
+
+        weight = random.randint(0, 100)
+        if weight > best_move_weight:
+            best_move = move
+            best_move_weight = weight
 
 def main():
+
+    global game_board
+    global computing
+
     # Initial configuration
     config = Config()
     init_board = board_parser.parse_board()
 
-    # Initial Message (i.e initial board)
+    # Initial Message (i.e initial setup)
     init_msg = message.InitMessage(init_board)
 
     io.send(init_msg)
 
     game_board = init_board
+
     # If we are going first, print the first move
     if config.turn == 1:
         mov_msg = message.MoveMessage(FIRST_MOVE[0], FIRST_MOVE[1])
@@ -45,18 +93,18 @@ def main():
 
             if msg.player == config.turn:
                 continue
-            list_of_moves = game_board.iterate_all_moves(board.Owner.PLAYER)
-            list_of_moves = list(list_of_moves)
-            if (len(list_of_moves) == 0):
+            compute_thread = threading.Thread(target=next_best_move)
+            compute_thread.start()
+            compute_thread.join((config.time / 1000) - ADJUST)
+            computing = False
+            if(forfeit):
                 fmsg = message.ForfeitMessage()
                 io.send(fmsg)
-                exit(-1)
-            rand_idx = random.randint(0, len(list_of_moves) - 1)
-            next_move = list_of_moves[rand_idx]
-            mov_msg = message.MoveMessage(next_move[0], next_move[1])
+                exit(10)
+            mov_msg = message.MoveMessage(best_move[0], best_move[1])
             io.send(mov_msg)
         elif isinstance(msg, message.FlagMessage):
-            #board.set_flag(msg.pos)
+            #game_board.set_flag(msg.pos)
             continue
         elif isinstance(msg, message.WinningMessage):
             break
