@@ -47,6 +47,10 @@ def main():
                 continue
             list_of_moves = game_board.iterate_all_moves(board.Owner.PLAYER)
             list_of_moves = list(list_of_moves)
+            if (len(list_of_moves) == 0):
+                fmsg = message.ForfeitMessage()
+                io.send(fmsg)
+                exit(-1)
             rand_idx = random.randint(0, len(list_of_moves) - 1)
             next_move = list_of_moves[rand_idx]
             mov_msg = message.MoveMessage(next_move[0], next_move[1])
