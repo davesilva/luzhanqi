@@ -12,7 +12,7 @@ import threading
 import time
 
 # our first move, a tuple of tuples (from, to)
-FIRST_MOVE = ((2,1),(3,2))
+FIRST_MOVE = ((2, 1), (3, 2))
 
 # next best move
 best_move = None
@@ -31,6 +31,7 @@ ADJUST = .2
 game_board = ()
 
 forfeit = False
+
 
 def next_best_move():
     global best_move
@@ -55,6 +56,7 @@ def next_best_move():
         if weight > best_move_weight:
             best_move = move
             best_move_weight = weight
+
 
 def main():
 
