@@ -379,6 +379,22 @@ class Board:
 
         return Board(new_list)
 
+    def set_flag(self, position):
+        """
+        Position -> Board
+
+        Indicates that the given position is the position of
+        the opponent's flag.
+
+        Precondition: The given position must be located in
+                      a headquarters.
+
+        """
+        assert(board_layout.is_headquarters(position))
+        updated = self
+
+        return updated
+
     def initialize_opponent_pieces(self):
         """
         -> Board

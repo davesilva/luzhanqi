@@ -112,8 +112,7 @@ def main():
             mov_msg = message.MoveMessage(best_move[0], best_move[1])
             io.send(mov_msg)
         elif isinstance(msg, message.FlagMessage):
-            #game_board.set_flag(msg.pos)
-            continue
+            game_board = game_board.set_flag(msg.pos)
         elif isinstance(msg, message.WinningMessage):
             break
         elif isinstance(msg, message.ErrorMessage):
