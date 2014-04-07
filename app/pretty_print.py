@@ -37,7 +37,7 @@ def print_for_player(s, player):
 
 def print_piece(p):
     if p.owner == board.Owner.PLAYER:
-        r = next(iter(p.ranks))
+        r = p.get_rank()
         r = "\033[34m%s\033[0m" % (str(r))
     else:
         r = "\033[31mX\033[0m"
