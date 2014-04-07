@@ -1,4 +1,4 @@
-from app.board import Board, Rank
+from app.board import Board, Rank, Owner
 from app.board_layout import *
 
 # Note that we are ONLY considering movable pieces i.e. no landmines or flags
