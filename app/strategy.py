@@ -72,7 +72,8 @@ def piece_commonality_rating(board, src):
 	max = 2
 	min = 2/3
 	lop = board.iterate_pieces(Owner.PLAYER)
-	num_same_pieces = len(filter(lambda p: p == src, lop))
+	num_same_pieces = len(list(
+		filter(lambda p: p.get_rank() == board.piece_at(src).get_rank(), lop)))
 	piece = board.piece_at(pos)
 	rank = piece.get_rank()
 	rarity_rating = RANK_INIT_AMT[rank] / 3
