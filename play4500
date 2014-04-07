@@ -28,12 +28,13 @@ computing = True
 # actually computing the next best move
 ADJUST = .2
 
-# the actual game_board
+# The actual game_board
 game_board = ()
 
 forfeit = False
 
 
+# Compute the best next move
 def next_best_move():
     global best_move
     global best_move_weight
@@ -43,7 +44,14 @@ def next_best_move():
 
     computing = True
     all_moves = game_board.iterate_all_moves(board.Owner.PLAYER)
-    best_move = next(all_moves)
+
+    # Check if we still have moves left, forfeit if not
+    try:
+        best_move = next(all_moves)
+    except StopIteration:
+        forfeit = True
+        return
+
     best_move_weight = random.randint(0, 100)
 
     while computing:
