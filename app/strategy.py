@@ -25,7 +25,12 @@ def action_value(board, src, dest):
 	Board Position Position -> Number
 	Returns the value of an action 
 	"""
-	(win, loss, tie) = prob_win_loss_tie(board, src, dest)
+	attack = board.piece_at(dest) == None
+	if attack: 
+		(win, loss, tie) = prob_win_loss_tie(board, src, dest)
+	else:
+		(win, loss, tie) = 0
+
 	value = \
 	WORTH_FACTOR * piece_worth(board, src) + \
 	LOSING_PIECE_FACTOR * (loss + tie) + \
