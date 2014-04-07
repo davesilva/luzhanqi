@@ -27,7 +27,7 @@ def action_value(board, src, dest):
 	"""
 
 	if board.piece_at(dest) == None:
-		(win, loss, tie) = 0
+		(win, loss, tie) = (0, 0, 0)
 	else:
 		(win, loss, tie) = prob_win_loss_tie(board, src, dest)
 
