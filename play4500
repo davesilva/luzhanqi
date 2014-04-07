@@ -34,7 +34,7 @@ game_board = ()
 forfeit = False
 
 
-# Compute the best next move
+# Compute the next best move
 def next_best_move():
     global best_move
     global best_move_weight
