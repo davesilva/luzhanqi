@@ -575,8 +575,8 @@ class Piece:
         p_tie = 0
         p_loss = 0
 
-        for rank_a in self.numerators:
-            for rank_b in other_piece.numerators:
+        for rank_a in self.prob_numerators:
+            for rank_b in other_piece.prob_numerators:
                 p = (self.probability(rank_a) *
                      other_piece.probability(rank_b))
 
