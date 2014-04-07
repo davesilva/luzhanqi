@@ -3,7 +3,7 @@ from app.board_layout import *
 
 # Note that we are ONLY considering movable pieces i.e. no landmines or flags
 # May need to consider the case of a movable piece placed in hq?
-RANK_WORTH = {1:2, 2:2, 3:3, 4:4, 5:5, 6:6, 7:7, 8:8, 9:9, 'B':5}
+RANK_WORTH = {1:2, 2:2, 3:3, 4:4, 5:5, 6:6, 7:7, 8:8, 9:9, 'B':5, 'L':1, 'F':1}
 
 RANK_INIT_AMT = {1:3, 2:3, 3:3, 4:2, 5:2, 6:2, 7:2, 8:1, 9:1, 'B':2}
 
@@ -23,21 +23,28 @@ def get_rank(piece):
 def action_value(board, src, dest):
 	"""
 	Board Position Position -> Number
-	Returns the value of an action 
+	Returns the value of an action from 0 - 1
 	"""
 
 	if board.piece_at(dest) == None:
-		(win, loss, tie) = (0, 0, 0)
+		return 0.5
 	else:
 		(win, loss, tie) = prob_win_loss_tie(board, src, dest)
+		return \
+			WORTH_FACTOR * piece_worth(board, src) + \
+			LOSING_PIECE_FACTOR * (loss + tie) + \
+			COMMONALITY_FACTOR * piece_commonality_rating(board, src) + \
+			PROXIMITY_FACTOR * proximity_rating(board, src, dest) + \
+			BRACE_FACTOR * brave_rating() 
 
+	"""
 	value = \
 	WORTH_FACTOR * piece_worth(board, src) + \
 	LOSING_PIECE_FACTOR * (loss + tie) + \
 	COMMONALITY_FACTOR * piece_commonality_rating(board, src) + \
 	PROXIMITY_FACTOR * proximity_rating(board, src, dest) + \
 	BRACE_FACTOR * brave_rating() 
-
+	"""
 	# Consider these in ratios!
 
 def piece_worth(board, pos):
