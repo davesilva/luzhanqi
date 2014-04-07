@@ -17,7 +17,7 @@ PROXIMITY_FACTOR = 0.25
 BRAVE_FACTOR = 0.1
  
 def get_rank(piece):
-	return next(iter(piece.ranks))
+	return next(iter(piece.ranks()))
 
 
 def action_value(board, src, dest):
