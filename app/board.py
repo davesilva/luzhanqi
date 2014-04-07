@@ -478,7 +478,7 @@ class Piece:
         possible ranks, and returns the modified Piece.
 
         """
-        ranks_to_remove = set(ranks)
+        ranks_to_remove = set(self.ranks()).intersection(set(ranks))
         ranks_to_keep = set(self.ranks()).difference(ranks_to_remove)
         new_numerators = {}
         new_denominators = {}
