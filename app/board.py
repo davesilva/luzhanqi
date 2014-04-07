@@ -4,7 +4,8 @@ import app.board_layout as board_layout
 from fractions import Fraction
 
 """
-A Position is a tuple of Numbers (row, column)
+A Position is a (row, col) where
+row is 0 - 11 and col is 0 - 4.
 """
 
 log = logging.getLogger("board")
@@ -13,13 +14,13 @@ log = logging.getLogger("board")
 class Rank:
     """
     Instance variables:
-    Char rank
+    str rank
 
     """
 
     def __init__(self, rank):
         """
-        Char -> Rank
+        str -> Rank
 
         Constructs a Rank with the given rank
 
@@ -28,12 +29,11 @@ class Rank:
 
     def __str__(self):
         """
-        -> String
+        -> str
 
         Returns a human readable string of this Rank
 
         >>> print(Rank('L'))
-
         L
 
         """
@@ -51,7 +51,7 @@ class Rank:
 
     def __hash__(self):
         """
-        -> Number
+        -> int
 
         Hashes this instance.
 
@@ -60,7 +60,7 @@ class Rank:
 
     def is_soldier(self):
         """
-        -> Boolean
+        -> bool
 
         Returns true if this piece is a soldier (rank 1-9).
 
@@ -69,7 +69,7 @@ class Rank:
 
     def wins_against(self, other_rank):
         """
-        -> Boolean
+        -> bool
 
         Returns true if a piece of this rank can defeat a
         piece of other_rank.
@@ -89,7 +89,7 @@ class Rank:
 
     def loses_against(self, other_rank):
         """
-        -> Boolean
+        -> bool
 
         Returns true if a piece of other_rank can defeat a
         piece of this rank.
@@ -99,7 +99,7 @@ class Rank:
 
     def ties_against(self, other_rank):
         """
-        -> Boolean
+        -> bool
 
         Returns true if a piece of this rank will tie with
         a piece of other rank.
@@ -127,12 +127,22 @@ class Rank:
             return "tie"
 
 class Owner:
+    """
+    An enumeration indicating the owner of any piece 
+    - either Owner.PLAYER or Owner.OPPONENT
+
+    """
 
     PLAYER = 0
     OPPONENT = 1
 
 
 class PieceNotFoundException(Exception):
+    """
+    Exception thrown when a piece is not found when trying to move
+    a piece that does not exist.
+
+    """
 
     def __init__(self, msg):
         self.msg = msg
@@ -144,13 +154,13 @@ class PieceNotFoundException(Exception):
 class Board:
     """
     Instance variables:
-    [Listof Piece] pieces_list
+    list(Piece) pieces_list
 
     """
 
     def __init__(self, pieces_list=[]):
         """
-        [Listof Piece] -> Board
+        list(Piece) -> Board
         Constructs a Board with the specified list of pieces.
 
         """
@@ -200,7 +210,7 @@ class Board:
 
     def is_space_blocked_for(self, position, owner):
         """
-        Position Owner -> Boolean
+        Position Owner -> bool
 
         Checks if the given position
         - can be moved into by the given player
@@ -219,7 +229,7 @@ class Board:
 
     def iterate_pieces(self, owner):
         """
-        Owner -> [Generator_of Piece]
+        Owner -> iter(Piece)
 
         Returns a generator for all pieces owned by the given player
 
@@ -229,18 +239,13 @@ class Board:
 
     def iterate_moves_for_piece(self, piece):
         """
-        Piece -> [Generator_of Position]
+        Piece -> iter(Position)
 
         Returns a generator for all possible moves that can
         be made by the given piece. A move is a position that the given
         piece can consider for relocation or attack.
 
         """
-        # TODO: if given piece is an engineer, also need to consider
-        # railway positions i.e. not just adjacent pieces
-        # The paths to these positions should also not be blocked by
-        # the player/opponent's pieces.
-
         if piece.is_stationary():
             return iter([])
 
@@ -251,7 +256,7 @@ class Board:
 
     def iterate_all_moves(self, owner):
         """
-        Owner -> [Generator_of (Position, Position)]
+        Owner -> iter((Position, Position))
 
         Returns a generator for all possible moves that can be made
         by the given player. A move is a tuple of positions
@@ -266,7 +271,7 @@ class Board:
 
     def serialize(self):
         """
-        -> String
+        -> str
 
         Serialize this Board.
 
@@ -275,6 +280,12 @@ class Board:
                 " ".join([p.serialize() for p in self.pieces_list]) + " )")
 
     def dump_debug_board(self):
+        """
+        -> 
+        
+        Logs the current state of the board.
+        
+        """
         log.debug(" | ".join([str(p) for p in self.pieces_list]))
 
     def remove_piece(self, pos):
@@ -527,7 +538,7 @@ class Piece:
 
     def is_stationary(self):
         """
-        -> Boolean
+        -> bool
 
         Returns true if this piece cannot be moved i.e. if it is a flag
         or a landmine or positioned at a headquarter.
@@ -591,7 +602,7 @@ class Piece:
 
     def __eq__(self, piece):
         """
-        Piece -> Boolean
+        Piece -> bool
 
         Checks if the given Piece is the same as this instance
         """
@@ -615,7 +626,7 @@ class Piece:
 
     def serialize(self):
         """
-        -> String
+        -> str
 
         Serialize this Piece.
         Precondition: The piece must have an owner of Owner.PLAYER

@@ -38,7 +38,7 @@ RE_MAP = {
 
 def pos_to_tuple(pos):
     """
-    String -> Position
+    str -> Position
 
     Converts a string representation of position on the board to a
     Position as a Tuple.
@@ -52,7 +52,7 @@ def pos_to_tuple(pos):
 
 def deserialize(packet):
     """
-    String -> [Subclass_of Message]
+    str -> [Subclass_of Message]
 
     Finds a matching of the given message to a regex in RE_MAP and
     returns the corresponding instance of a subclass of Message.
@@ -75,12 +75,12 @@ def deserialize(packet):
 class BadMessageException(Exception):
     """
     Instance variables:
-    String value
+    str value
     """
 
     def __init__(self, s):
         """
-        String -> BadMessageException
+        str -> BadMessageException
 
         Constructs a BadMessageException with the given message.
 
@@ -92,7 +92,7 @@ class BadMessageException(Exception):
 
     def __str__(self):
         """
-        -> String
+        -> str
 
         Produce a readable official string representation of the instance's
         value.
@@ -155,7 +155,7 @@ class InitMessage(Message):
 
     def serialize(self):
         """
-        -> String
+        -> str
 
         Serialize this InitMessage.
 
@@ -172,7 +172,7 @@ class ForfeitMessage(Message):
 
     def serialize(self):
         """
-        -> String
+        -> str
 
         Serialize this ForfeitMessage.
         """
@@ -184,13 +184,13 @@ class MoveMessage(Message):
     Position posfrom
     Position posto
     Integer player
-    String movetype
+    str movetype
 
     """
 
     def __init__(self, posfrom, posto, player=1, movetype=""):
         """
-        Position Position <Integer> <String> -> MoveMessage
+        Position Position <Integer> <str> -> MoveMessage
 
         Constructs a Movemessage that represents a ref to player message
         with the given values
@@ -206,7 +206,7 @@ class MoveMessage(Message):
 
     def serialize(self):
         """
-        -> String
+        -> str
 
         Serialize this MoveMessage.
 
@@ -225,7 +225,7 @@ class MoveMessage(Message):
 
     def __str__(self):
         """
-        -> String
+        -> str
 
         Returns a human readable string representing a MoveMessage.
 
@@ -277,7 +277,7 @@ class FlagMessage(Message):
 
     def __str__(self):
         """
-        -> String
+        -> str
 
         Returns a human readable string representing a FlagMessage.
 
@@ -302,13 +302,13 @@ class FlagMessage(Message):
 class WinningMessage(Message):
     """
     Instance variables:
-    String result
+    str result
 
     """
 
     def __init__(self, result):
         """
-        String -> WinningMessage
+        str -> WinningMessage
 
         Constructs a WinningMessage initialized with the given winner.
 
@@ -317,7 +317,7 @@ class WinningMessage(Message):
 
     def __str__(self):
         """
-        -> String
+        -> str
 
         Returns a human readable string representing WinningMessage.
 
@@ -343,12 +343,12 @@ class WinningMessage(Message):
 class ErrorMessage(Message):
     """
     Instance variables:
-    String error
+    str error
 
     """
     def __init__(self, error):
         """
-        String -> ErrorMessage
+        str -> ErrorMessage
 
         Constructor an ErrorMessage initialized with the given error
         message.
