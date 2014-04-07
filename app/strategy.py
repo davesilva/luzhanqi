@@ -16,7 +16,7 @@ COMMONALITY_FACTOR = 0.05
 PROXIMITY_FACTOR = 0.25
 BRAVE_FACTOR = 0.1
  
-def get_rank(p):
+def get_rank(piece):
 	return next(iter(piece.ranks))
 
 
