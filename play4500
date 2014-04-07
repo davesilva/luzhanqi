@@ -8,6 +8,7 @@ import app.io as io
 import app.board as board
 import app.logging_config
 import app.debug as debug
+import app.strategy as strategy
 import random
 import threading
 import time
@@ -44,7 +45,9 @@ def next_best_move():
     computing = True
     all_moves = game_board.iterate_all_moves(board.Owner.PLAYER)
     best_move = next(all_moves)
-    best_move_weight = random.randint(0, 100)
+    #best_move_weight = random.randint(0, 100)
+    (pos_from, pos_to) = best_move
+    bestmove_weight = strategy.action_value(game_board, pos_from, pos_to)
 
     while computing:
         try:
@@ -52,8 +55,8 @@ def next_best_move():
         except StopIteration:
             forfeit = True
             return
-
-        weight = random.randint(0, 100)
+        (pos_from, pos_to) = move
+        weight = strategy.action_value(game_board, pos_from, pos_to)
         if weight > best_move_weight:
             best_move = move
             best_move_weight = weight
