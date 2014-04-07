@@ -4,9 +4,13 @@ import app.board as board
 PATH = "app/template_board"
 
 
-# -> Board
-# parse "./board" and return a board
 def parse_board():
+    """
+    -> Board
+    
+    Parse "./board" and return a Board instance
+    
+    """
     b = board.Board()
     fp = open(PATH, "r")
 

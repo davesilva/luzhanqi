@@ -3,6 +3,11 @@ from app.config import Config
 from os import path
 from time import gmtime, strftime
 
+"""
+Initialize logging environment
+"""
+
+
 FORMAT_STRING = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 
 config = Config()

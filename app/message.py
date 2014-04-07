@@ -52,7 +52,7 @@ def pos_to_tuple(pos):
 
 def deserialize(packet):
     """
-    str -> [Subclass_of Message]
+    str -> Message
 
     Finds a matching of the given message to a regex in RE_MAP and
     returns the corresponding instance of a subclass of Message.
@@ -97,10 +97,8 @@ class BadMessageException(Exception):
         Produce a readable official string representation of the instance's
         value.
 
-        >>>> print(BadMessageException("Invalid Message from the Ref"))
+        >>> print(BadMessageException("Invalid Message from the Ref"))
         Invalid Message from Ref
-
-        Note: it is same as print("'Invalid Message from the Ref'")
 
         """
         return repr(self.value)
@@ -111,27 +109,27 @@ class Message(object):
 
     def __init__(self):
         """
-        ->
+        -> Message
 
-        Function does nothing
+        Placeholder method overriden in child
 
         """
         pass
 
     def __str__(self):
         """
-        ->
+        -> str
 
-        Function does nothing
+        Placeholder method overriden in child
 
         """
         pass
 
     def serialize(self):
         """
-        ->
+        -> str
 
-        Function does nothing
+        Placeholder method overriden in child
 
         """
         pass
@@ -164,7 +162,8 @@ class InitMessage(Message):
 
 class ForfeitMessage(Message):
     """
-        Forfeit Message
+    Forfeit Message
+
     """
 
     def __init__(self):
@@ -175,6 +174,7 @@ class ForfeitMessage(Message):
         -> str
 
         Serialize this ForfeitMessage.
+
         """
         return "forfeit"
 
@@ -183,14 +183,14 @@ class MoveMessage(Message):
     Instance variables:
     Position posfrom
     Position posto
-    Integer player
+    int player
     str movetype
 
     """
 
     def __init__(self, posfrom, posto, player=1, movetype=""):
         """
-        Position Position <Integer> <str> -> MoveMessage
+        Position Position player=int movetype=str -> MoveMessage
 
         Constructs a Movemessage that represents a ref to player message
         with the given values
@@ -240,7 +240,7 @@ class MoveMessage(Message):
 
     def __eq__(self, obj):
         """
-        -> MoveMessage
+        object -> bool
 
         Checks if this message and the given MoveMessage are equal
 
@@ -291,7 +291,7 @@ class FlagMessage(Message):
 
     def __eq__(self, obj):
         """
-        . -> FlagMessage
+        object -> bool
 
         Checks if this FlagMessage is equal to the given FlagMessage.
 
@@ -332,7 +332,7 @@ class WinningMessage(Message):
 
     def __eq__(self, obj):
         """
-        -> WinningMessage
+        object -> bool
 
         Checks if this WinningMessage is equal to the given WinningMessage.
 
@@ -358,6 +358,8 @@ class ErrorMessage(Message):
 
     def __eq__(self, obj):
         """
+        object -> bool
+
         Checks if this ErrorMessage is equal to the given ErrorMessage.
 
         """
@@ -365,6 +367,8 @@ class ErrorMessage(Message):
 
     def __str__(self):
         """
+        -> str
+
         Returns a human readable string representing the ErrorMessage
 
         >>> print(ErrorMessage("Piece not movable"))

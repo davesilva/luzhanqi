@@ -6,6 +6,12 @@ log = logging.getLogger("io")
 
 
 def send(msg):
+    """
+    Message ->
+
+    Serializes the message and writes it to stdout
+
+    """
     serial = msg.serialize()
     sys.stdout.write(serial)
     sys.stdout.flush()
@@ -13,6 +19,11 @@ def send(msg):
 
 
 def receive():
+    """
+    -> Message
+
+    Receive a message from stdin and deserializes it
+    """
     packet = sys.stdin.readline()
     log.debug("received: " + packet)
     msg = message.deserialize(packet)

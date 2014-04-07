@@ -1,8 +1,9 @@
-"""
-A Position is a tuple of Numbers (row, column)
-"""
-
 from app.position import *
+
+"""
+A Position is a (row, col) where
+row is 0 - 11 and col is 0 - 4.
+"""
 
 _WIDTH = 5
 _HEIGHT = 12
@@ -17,15 +18,15 @@ TYPE_MAP = {"S": STATION, "C": CAMP, "H": HEADQUARTERS, "R": STATION}
 class Space:
     """
     Instance variables:
-    Integer            space_type
-    Boolean            on_railroad
-    [Set_of Position]  adjacent
+    bool           on_railroad
+    int            space_type
+    set(Position)  adjacent
 
     """
 
     def __init__(self, on_railroad, space_type, adjacent):
         """
-        <Boolean> <Integer> -> Space
+        bool int Position -> Space
 
         Constructs an instance of Space.
 
@@ -36,7 +37,7 @@ class Space:
 
     def __iter__(self):
         """
-        -> [Generator_of Position]
+        -> iter(Position)
 
         Returns a generator of positions that are adjacent to this space.
 
@@ -46,7 +47,7 @@ class Space:
 
 def is_adjacent(v1, v2):
     """
-    Position Position -> Boolean
+    Position Position -> bool
 
     Checks if the given 2 positions are adjacent to each other.
 
@@ -56,7 +57,7 @@ def is_adjacent(v1, v2):
 
 def is_camp(p):
     """
-    Position -> Boolean
+    Position -> bool
 
     Checks if the give position is a camp
 
@@ -66,7 +67,7 @@ def is_camp(p):
 
 def is_headquarters(p):
     """
-    Position -> Boolean
+    Position -> bool
 
     Checks if the given position is a headquarter
 
@@ -76,7 +77,7 @@ def is_headquarters(p):
 
 def iterate_adjacent(position):
     """
-    Position -> [Generator_of Position]
+    Position -> iter(Position)
 
     Returns a generator of positions that are adjacent to the given position.
 
@@ -98,5 +99,6 @@ def generate_board():
             (raw[1] == "R"),
             TYPE_MAP[raw[1]],
             {str_to_pos(str_pos) for str_pos in raw[2:]})
+
 
 generate_board()

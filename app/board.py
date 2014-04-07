@@ -148,6 +148,12 @@ class PieceNotFoundException(Exception):
         self.msg = msg
 
     def __str__(self):
+        """
+        -> str
+
+        Returns the message causing exception
+
+        """
         return repr(self.msg)
 
 
@@ -370,7 +376,7 @@ class Board:
 
     def exclude_ranks(self, piece, ranks):
         """
-        Piece [Ranks] -> Board
+        Piece list(ranks) -> Board
 
         Excludes the given set of ranks for the given piece, returning
         the updated board.
@@ -416,8 +422,8 @@ class Piece:
     Instance variables:
     Position                    position
     Owner                       owner
-    Dictionary(Rank, Fraction)  numerators
-    Dictionary(Rank, Fraction)  denominators
+    dict(Rank, Fraction)  numerators
+    dict(Rank, Fraction)  denominators
 
     The numerators and denominators dictionaries map a rank
     to a probability (numerators[rank]/denominators[rank]).
@@ -430,7 +436,7 @@ class Piece:
         Position Owner Rank -> Piece
            --or--
         Position Owner
-           Dictionary(Rank, Number) Dictionary(Rank, Number) -> Piece
+           dict(Rank, Number) dict(Rank, Number) -> Piece
 
         Constructs an instance of Piece initialized with its position,
         owner and a dictionary that maps all possible ranks to the
@@ -549,7 +555,7 @@ class Piece:
 
     def probability(self, rank):
         """
-        -> Fraction
+        Rank -> Fraction
 
         Returns the probability that this piece has the given Rank.
 
@@ -575,7 +581,7 @@ class Piece:
 
     def expected_attack_outcome(self, other_piece):
         """
-        -> (Fraction, Fraction, Fraction)
+        Piece -> (Fraction, Fraction, Fraction)
 
         Returns the expected outcome of an attack made by this piece
         against other_piece. The expected outcome is returned as a tuple
@@ -602,7 +608,7 @@ class Piece:
 
     def __eq__(self, piece):
         """
-        Piece -> bool
+        object -> bool
 
         Checks if the given Piece is the same as this instance
         """
@@ -613,6 +619,11 @@ class Piece:
                 self.owner == piece.owner)
 
     def __str__(self):
+        """
+        -> str
+
+        Returns a string describing this piece
+        """
         (x, y) = self.position
 
         if self.owner == Owner.PLAYER:
@@ -650,7 +661,7 @@ class Piece:
 
     def ranks(self):
         """
-        -> Generator_of(Rank)
+        -> iter(Rank)
 
         Returns an iterator which will iterate over all of this
         piece's possible ranks.
@@ -661,7 +672,7 @@ class Piece:
 
 def _initial_probability_for(position):
     """
-    Position -> Dictionary(Rank, Fraction)
+    Position -> dict(Rank, Fraction)
 
     Returns the initial probability dictionary for a piece placed
     at the given position. Probabilities are calculated as follows:
