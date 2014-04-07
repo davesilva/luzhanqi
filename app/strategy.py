@@ -48,7 +48,7 @@ def piece_worth(board, pos):
 	max = 9
 	min = 2
 	piece = board.piece_at(pos)
-	rank = get_rank(p)
+	rank = get_rank(piece)
 	return RANK_WORTH[rank] / (max - min)
 
 def prob_win_loss_tie(board, src, dest):
