@@ -403,13 +403,13 @@ SOLDIER_RANKS = {Rank(str(r)) for r in range(1, 10)}
 class Piece:
     """
     Instance variables:
-    Position                  position
-    Owner                     owner
-    Dictionary(Rank, Fraction)  ranks
+    Position                    position
+    Owner                       owner
+    Dictionary(Rank, Fraction)  numerators
+    Dictionary(Rank, Fraction)  denominators
 
-    The ranks Dictionary is a mapping from a Rank to a
-    probability. Probabilities are represented as a python
-    Fraction.
+    The numerators and denominators dictionaries map a rank
+    to a probability (numerators[rank]/denominators[rank]).
 
     """
 
@@ -562,7 +562,7 @@ class Piece:
                        - self.probability(Rank('L'))
                        - self.probability(Rank('F'))))
 
-    def attack_outcome(self, other_piece):
+    def expected_attack_outcome(self, other_piece):
         """
         -> (Fraction, Fraction, Fraction)
 
