@@ -58,7 +58,6 @@ def next_best_move():
         try:
             move = next(all_moves)
         except StopIteration:
-            forfeit = True
             return
 
         weight = random.randint(0, 100)
