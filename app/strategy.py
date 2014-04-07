@@ -1,11 +1,14 @@
-import app.board as board
+from app.board import Board, Rank
 from app.board_layout import *
 
 # Note that we are ONLY considering movable pieces i.e. no landmines or flags
 # May need to consider the case of a movable piece placed in hq?
-RANK_WORTH = {1:2, 2:2, 3:3, 4:4, 5:5, 6:6, 7:7, 8:8, 9:9, 'B':5, 'L':1, 'F':1}
+RANK_WORTH = {Rank('1'):2, Rank('2'):2, Rank('3'):3, Rank('4'):4, Rank('5'):5, 
+	Rank('6'):6, Rank('7'):7, Rank('8'):8, Rank('9'):9, Rank('B'):5}
 
-RANK_INIT_AMT = {1:3, 2:3, 3:3, 4:2, 5:2, 6:2, 7:2, 8:1, 9:1, 'B':2}
+RANK_INIT_AMT = {Rank('1'):3, Rank('2'):3, Rank('3'):3, Rank('4'):2, 
+	Rank('5'):2, Rank('6'):2, Rank('7'):2, Rank('8'):1, Rank('9'):1, 
+	Rank('B'):2}
 
 # Factors should all up to 1
 # TODO Dictionary: weight to functions 
@@ -15,37 +18,27 @@ LOSING_PIECE_FACTOR = 0.3
 COMMONALITY_FACTOR = 0.05
 PROXIMITY_FACTOR = 0.25
 BRAVE_FACTOR = 0.1
- 
-def get_rank(piece):
-	return next(iter(piece.ranks()))
 
 
 def action_value(board, src, dest):
 	"""
 	Board Position Position -> Number
-	Returns the value of an action from 0 - 1
+	Returns the value of an attack from 0 - 1
+
+	TODO: VALUE OF MOVES
 	"""
 
 	if board.piece_at(dest) == None:
 		return 0.5
 	else:
 		(win, loss, tie) = prob_win_loss_tie(board, src, dest)
-		return \
+		value = \
 			WORTH_FACTOR * piece_worth(board, src) + \
 			LOSING_PIECE_FACTOR * (loss + tie) + \
 			COMMONALITY_FACTOR * piece_commonality_rating(board, src) + \
 			PROXIMITY_FACTOR * proximity_rating(board, src, dest) + \
-			BRACE_FACTOR * brave_rating() 
-
-	"""
-	value = \
-	WORTH_FACTOR * piece_worth(board, src) + \
-	LOSING_PIECE_FACTOR * (loss + tie) + \
-	COMMONALITY_FACTOR * piece_commonality_rating(board, src) + \
-	PROXIMITY_FACTOR * proximity_rating(board, src, dest) + \
-	BRACE_FACTOR * brave_rating() 
-	"""
-	# Consider these in ratios!
+			BRAVE_FACTOR * brave_rating() 
+		return value
 
 def piece_worth(board, pos):
 	"""
@@ -55,7 +48,7 @@ def piece_worth(board, pos):
 	max = 9
 	min = 2
 	piece = board.piece_at(pos)
-	rank = get_rank(piece)
+	rank = piece.get_rank()
 	return RANK_WORTH[rank] / (max - min)
 
 def prob_win_loss_tie(board, src, dest):
@@ -80,7 +73,9 @@ def piece_commonality_rating(board, src):
 	min = 2/3
 	lop = board.iterate_pieces(Owner.PLAYER)
 	num_same_pieces = len(filter(lambda p: p == src, lop))
-	rarity_rating = RANK_INIT_AMT[get_rank(p)] / 3
+	piece = board.piece_at(pos)
+	rank = piece.get_rank()
+	rarity_rating = RANK_INIT_AMT[rank] / 3
 	rating = (num_same_pieces/num_orig) + num_same_pieces
 	return rating / (max - min)
 
@@ -105,9 +100,11 @@ def tradeoff_rating(board, pos):
 	comparing how many pieces have a higher or
 	equal worth than it
 	"""
-	subj_worth = RANK_WORTH[get_rank(pos)]
+	piece = board.piece_at(pos)
+	rank = piece.get_rank()
+	subj_worth = RANK_WORTH[rank]
 	lop = board.iterate_pieces(Owner.PLAYER)
-	higher_worth_pieces = filter(lambda p: RANK_WORTH[get_rank(p)] \
+	higher_worth_pieces = filter(lambda p: RANK_WORTH[p.get_rank()] \
 		                                   >= subj_worth, lop)
 	num_higher_worth_pieces = len(higher_worth_pieces)
 	return num_higher_worth_pieces / (max - min)
