@@ -33,8 +33,8 @@ def action_value(board, src, dest):
 	else:
 		(win, loss, tie) = prob_win_loss_tie(board, src, dest)
 		value = \
-			WORTH_FACTOR * piece_worth(board, src) #+ \
-			#LOSING_PIECE_FACTOR * (loss + tie) + \
+			WORTH_FACTOR * piece_worth(board, src) + \
+			LOSING_PIECE_FACTOR * (loss + tie) #+ \
 			#COMMONALITY_FACTOR * piece_commonality_rating(board, src) + \
 			#PROXIMITY_FACTOR * proximity_rating(board, src, dest) + \
 			#BRAVE_FACTOR * brave_rating() 
