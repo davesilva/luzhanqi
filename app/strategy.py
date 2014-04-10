@@ -36,8 +36,8 @@ def action_value(board, src, dest):
 			WORTH_FACTOR * piece_worth(board, src) + \
 			LOSING_PIECE_FACTOR * (loss + tie) + \
 			COMMONALITY_FACTOR * piece_commonality_rating(board, src) + \
-			PROXIMITY_FACTOR * proximity_rating(board, src, dest) #+ \
-			#BRAVE_FACTOR * brave_rating() 
+			PROXIMITY_FACTOR * proximity_rating(board, src, dest) + \
+			BRAVE_FACTOR * brave_rating() 
 		return value
 
 def piece_worth(board, pos):
@@ -98,19 +98,21 @@ def proximity_rating(board, src, dest):
 	else:
 		return dest[0] / (max - min)
 
-def tradeoff_rating(board, pos):
+def brave_rating(board, pos):
 	"""
 	Board Position -> Number
 	Determines how brave the piece can be by 
 	comparing how many pieces have a higher or
 	equal worth than it
 	"""
+	max = 18
+	min = 0
 	piece = board.piece_at(pos)
 	rank = piece.get_rank()
 	subj_worth = RANK_WORTH[rank]
 	lop = board.iterate_pieces(Owner.PLAYER)
-	higher_worth_pieces = filter(lambda p: RANK_WORTH[p.get_rank()] \
-		                                   >= subj_worth, lop)
+	higher_worth_pieces = list(
+		filter(lambda p: RANK_WORTH[p.get_rank()] >= subj_worth, lop))
 	num_higher_worth_pieces = len(higher_worth_pieces)
 	return num_higher_worth_pieces / (max - min)
 
