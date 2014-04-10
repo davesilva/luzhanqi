@@ -4,6 +4,7 @@ from app.message import *
 from fractions import Fraction
 
 
+opponent_board = Board().initialize_opponent_pieces()
 p1 = Piece((0, 1), Owner.PLAYER, Rank('1'))
 p2 = Piece((0, 0), Owner.PLAYER, Rank('4'))
 opponent = Piece((1, 2), Owner.OPPONENT, Rank('8'))
@@ -51,8 +52,7 @@ class TestPiece(unittest.TestCase):
         self.assertFalse(p_unknown_rank.is_stationary())
 
     def test_exclude_ranks_with_front_row_piece(self):
-        b = Board().initialize_opponent_pieces()
-        p_before = b.piece_at((0, 6))
+        p_before = opponent_board.piece_at((0, 6))
         p_after = p_before.exclude_ranks({Rank(str(r)) for r in range(1, 7)})
 
         self.assertEqual(p_after.probability(Rank('1')), 0)
@@ -164,11 +164,10 @@ class TestBoard(unittest.TestCase):
         self.assertEqual(list(b.iterate_all_moves(Owner.PLAYER)), [])
 
     def test_initialize_opponent_pieces(self):
-        b = Board().initialize_opponent_pieces()
-        hq_piece = b.piece_at((1, 11))
-        back_piece = b.piece_at((0, 11))
-        middle_piece = b.piece_at((0, 9))
-        front_piece = b.piece_at((0, 6))
+        hq_piece = opponent_board.piece_at((1, 11))
+        back_piece = opponent_board.piece_at((0, 11))
+        middle_piece = opponent_board.piece_at((0, 9))
+        front_piece = opponent_board.piece_at((0, 6))
 
         self.assertEqual(hq_piece.probability(Rank('F')), Fraction('1/2'))
         self.assertEqual(hq_piece.probability(Rank('L')), Fraction('1/6'))
@@ -180,6 +179,13 @@ class TestBoard(unittest.TestCase):
 
         self.assertEqual(back_piece.probability(Rank('F')), Fraction('0'))
         self.assertEqual(middle_piece.probability(Rank('L')), Fraction('0'))
+
+    def test_set_flag(self):
+        b = opponent_board.set_flag((1, 11))
+        flag = b.piece_at((1, 11))
+
+        self.assertEqual(flag.probability(Rank('L')), Fraction('0'))
+        self.assertEqual(flag.probability(Rank('F')), Fraction('1'))
 
 if __name__ == '__main__':
     unittest.main()
