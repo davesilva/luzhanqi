@@ -1,13 +1,15 @@
 import unittest
 from app.board import Board, Piece, Owner, Rank, PieceNotFoundException
 from app.message import *
+from fractions import Fraction
 
 
 p1 = Piece((0, 1), Owner.PLAYER, Rank('1'))
 p2 = Piece((0, 0), Owner.PLAYER, Rank('4'))
-opponent = Piece((1,2), Owner.OPPONENT, Rank('8'))
+opponent = Piece((1, 2), Owner.OPPONENT, Rank('8'))
 flag = Piece((0, 1), Owner.PLAYER, Rank('F'))
 landmine = Piece((0, 0), Owner.PLAYER, Rank('L'))
+
 
 class TestRank(unittest.TestCase):
 
@@ -18,8 +20,8 @@ class TestRank(unittest.TestCase):
 
 
 class TestPiece(unittest.TestCase):
-    def test_create_rank_with_set(self):
-        p = Piece((0, 0), Owner.PLAYER, frozenset([Rank('1')]))
+    def test_create_rank_with_dict_of_ranks(self):
+        p = Piece((0, 0), Owner.PLAYER, {Rank('1'): 1})
         self.assertEqual(p.serialize(), "( A1 1 )")
 
     def test_create_rank_with_one_rank(self):
@@ -42,9 +44,21 @@ class TestPiece(unittest.TestCase):
         self.assertTrue(p.is_stationary())
 
     def test_is_stationary_with_non_stationary_pieces(self):
-        p_unknown_rank = Piece((0, 0), Owner.PLAYER, {Rank('F'), Rank('4')})
+        p_unknown_rank = Piece((0, 0), Owner.OPPONENT,
+                               {Rank('F'): 1, Rank('4'): 1},
+                               {Rank('F'): 2, Rank('4'): 1})
         self.assertFalse(p1.is_stationary())
         self.assertFalse(p_unknown_rank.is_stationary())
+
+    def test_exclude_ranks_with_front_row_piece(self):
+        b = Board().initialize_opponent_pieces()
+        p_before = b.piece_at((0, 6))
+        p_after = p_before.exclude_ranks({Rank(str(r)) for r in range(1, 7)})
+
+        self.assertEqual(p_after.probability(Rank('1')), 0)
+        self.assertEqual(p_after.probability(Rank('7')), Fraction('1/2'))
+        self.assertEqual(p_after.probability(Rank('8')), Fraction('1/4'))
+        self.assertEqual(p_after.probability(Rank('9')), Fraction('1/4'))
 
 
 class TestBoard(unittest.TestCase):
@@ -71,7 +85,7 @@ class TestBoard(unittest.TestCase):
     def test_move_piece_nonexistant(self):
         p = Piece((0, 0), Owner.PLAYER, Rank('1'))
         b = Board().place_piece(p).move_piece((0, 0), (0, 1))
-        self.assertRaises(PieceNotFoundException, b.move_piece, (2,1), (3,2))
+        self.assertRaises(PieceNotFoundException, b.move_piece, (2, 1), (3, 2))
 
     def test_remove_piece(self):
         p = Piece((0, 0), Owner.PLAYER, Rank('1'))
@@ -80,7 +94,6 @@ class TestBoard(unittest.TestCase):
         self.assertEqual(mt.serialize(), b.serialize())
 
     def test_remove_piece_nonexistant(self):
-        p = Piece((0, 0), Owner.PLAYER, Rank('1'))
         mt = Board()
         self.assertRaises(PieceNotFoundException, mt.remove_piece, (0, 0))
 
@@ -159,6 +172,24 @@ class TestBoard(unittest.TestCase):
     def test_iterate_all_moves_with_landmine_and_flag(self):
         b = Board().place_piece(landmine).place_piece(flag)
         self.assertEqual(list(b.iterate_all_moves(Owner.PLAYER)), [])
+
+    def test_initialize_opponent_pieces(self):
+        b = Board().initialize_opponent_pieces()
+        hq_piece = b.piece_at((1, 11))
+        back_piece = b.piece_at((0, 11))
+        middle_piece = b.piece_at((0, 9))
+        front_piece = b.piece_at((0, 6))
+
+        self.assertEqual(hq_piece.probability(Rank('F')), Fraction('1/2'))
+        self.assertEqual(hq_piece.probability(Rank('L')), Fraction('1/6'))
+        self.assertEqual(hq_piece.probability(Rank('B')), Fraction('1/24'))
+        self.assertEqual(hq_piece.probability(Rank('1')), Fraction('21/456'))
+        self.assertEqual(hq_piece.probability(Rank('7')), Fraction('14/456'))
+        self.assertEqual(hq_piece.probability(Rank('8')), Fraction('7/456'))
+        self.assertEqual(front_piece.probability(Rank('8')), Fraction('1/19'))
+
+        self.assertEqual(back_piece.probability(Rank('F')), Fraction('0'))
+        self.assertEqual(middle_piece.probability(Rank('L')), Fraction('0'))
 
 if __name__ == '__main__':
     unittest.main()

@@ -1,7 +1,6 @@
-import app.board as board
 import re
 
-""" 
+"""
 A Position is a tuple of Numbers (row, column)
 """
 
@@ -12,52 +11,54 @@ IM_NO_PIECE_RE = "No Piece"
 IM_FT_INVALID_RE = "From To Invalid"
 IM_LOC_INVALID_RE = "Location Invalid"
 INVALID_MOVE_RE = "(Invalid Board Move) (%s|%s|%s|%s)$" % \
-                   (IM_PIECE_MOVE_RE, IM_NO_PIECE_RE,     \
-                    IM_FT_INVALID_RE, IM_LOC_INVALID_RE)
+    (IM_PIECE_MOVE_RE, IM_NO_PIECE_RE,
+     IM_FT_INVALID_RE, IM_LOC_INVALID_RE)
 POSITION_RE = "([A-E]1[0-2]|[A-E][1-9])"
 PLAYER_RE = "(1|2)"
 RCV_MOVE_RE = "%s %s %s (move|win|loss|tie)$" % \
-              (POSITION_RE, POSITION_RE, PLAYER_RE)
+    (POSITION_RE, POSITION_RE, PLAYER_RE)
 FLAG_RE = "F %s$" % (POSITION_RE)
 WINNING_RE = "(1|2|No) Victory$"
 
-""" 
-Mappings of regex of ref->player messages to their thunked Message 
-subclass instances. 
 """
-RE_MAP ={
-         INVALID_SETUP_RE: (lambda match: ErrorMessage(match.group(1))),
-         INVALID_MOVE_RE: (lambda match: ErrorMessage(match.group(2))),
-         RCV_MOVE_RE: (lambda match: MoveMessage(pos_to_tuple(match.group(1)), \
-                                                 pos_to_tuple(match.group(2)), \
-                                                 int(match.group(3)),          \
-                                                 match.group(4))),
-         FLAG_RE: (lambda match: FlagMessage(pos_to_tuple(match.group(1)))),
-         WINNING_RE: (lambda match: WinningMessage(match.group(1)))
-        }
+Mappings of regex of ref->player messages to their thunked Message
+subclass instances.
+"""
+RE_MAP = {
+    INVALID_SETUP_RE: (lambda match: ErrorMessage(match.group(1))),
+    INVALID_MOVE_RE: (lambda match: ErrorMessage(match.group(2))),
+    RCV_MOVE_RE: (lambda match: MoveMessage(pos_to_tuple(match.group(1)),
+                                            pos_to_tuple(match.group(2)),
+                                            int(match.group(3)),
+                                            match.group(4))),
+    FLAG_RE: (lambda match: FlagMessage(pos_to_tuple(match.group(1)))),
+    WINNING_RE: (lambda match: WinningMessage(match.group(1)))
+    }
+
 
 def pos_to_tuple(pos):
     """
-    String -> Position 
-    
-    Converts a string representation of position on the board to a 
+    String -> Position
+
+    Converts a string representation of position on the board to a
     Position as a Tuple.
 
     >>> pos_to_tuple("A1")
     (0,0)
-    
+
     """
     return (ord(pos[0]) - ord('A'), int(pos[1:]) - 1)
+
 
 def deserialize(packet):
     """
     String -> [Subclass_of Message]
 
-    Finds a matching of the given message to a regex in RE_MAP and 
+    Finds a matching of the given message to a regex in RE_MAP and
     returns the corresponding instance of a subclass of Message.
 
-    Raises a BadMessageException if the given message does not match 
-    any regexes in RE_MAP. 
+    Raises a BadMessageException if the given message does not match
+    any regexes in RE_MAP.
 
     >>> deserialize("A6 B6 1 win")
     MoveMessage((0,5) (1,5) 1 "win")
@@ -66,9 +67,9 @@ def deserialize(packet):
     for rx in RE_MAP:
         match = re.search(rx, packet)
         if match:
-           return RE_MAP[rx](match)
+            return RE_MAP[rx](match)
 
-    raise BadMessageException("Invalid Message from the Ref: %s"%(packet))
+    raise BadMessageException("Invalid Message from the Ref: %s" % (packet))
 
 
 class BadMessageException(Exception):
@@ -93,8 +94,8 @@ class BadMessageException(Exception):
         """
         -> String
 
-        Produce a readable official string representation of the instance's 
-        value. 
+        Produce a readable official string representation of the instance's
+        value.
 
         >>>> print(BadMessageException("Invalid Message from the Ref"))
         Invalid Message from Ref
@@ -140,9 +141,9 @@ class InitMessage(Message):
     """
     Instance variables:
     Board board
-    
+
     """
-    
+
     def __init__(self, aboard):
         """
         Board -> InitMessage
@@ -156,11 +157,26 @@ class InitMessage(Message):
         """
         -> String
 
-        Serialize this InitMessage. 
+        Serialize this InitMessage.
 
         """
         return self.board.serialize()
 
+class ForfeitMessage(Message):
+    """
+        Forfeit Message
+    """
+
+    def __init__(self):
+        pass
+
+    def serialize(self):
+        """
+        -> String
+
+        Serialize this ForfeitMessage.
+        """
+        return "forfeit"
 
 class MoveMessage(Message):
     """
@@ -180,7 +196,7 @@ class MoveMessage(Message):
         with the given values
         or
         Constructs a MoveMessage that represents a player to ref message
-        with the given values and default values. 
+        with the given values and default values.
 
         """
         self.posfrom = posfrom
@@ -204,8 +220,8 @@ class MoveMessage(Message):
         p = self.posfrom
         t = self.posto
         base_char = ord('A')
-        return "( %c%d %c%d )"%(base_char + p[0], p[1] + 1, \
-                                base_char + t[0], t[1] + 1)
+        return "( %c%d %c%d )" % (base_char + p[0], p[1] + 1,
+                                  base_char + t[0], t[1] + 1)
 
     def __str__(self):
         """
@@ -220,13 +236,13 @@ class MoveMessage(Message):
         Move message: ( C3 C4 )
 
         """
-        return "Move message: %s"%(self.serialize())
+        return "Move message: %s" % (self.serialize())
 
     def __eq__(self, obj):
         """
         -> MoveMessage
 
-        Checks if this message and the given MoveMessage are equal 
+        Checks if this message and the given MoveMessage are equal
 
         >>>> MoveMessage((1,4), (1,5)) == MoveMessage((1,4), (1,5))
         True
@@ -242,12 +258,11 @@ class MoveMessage(Message):
             self.movetype == obj.movetype
 
 
-
 class FlagMessage(Message):
     """
     Instance variables:
     Position pos
-    
+
     """
 
     def __init__(self, pos):
@@ -262,7 +277,7 @@ class FlagMessage(Message):
 
     def __str__(self):
         """
-        -> String 
+        -> String
 
         Returns a human readable string representing a FlagMessage.
 
@@ -272,7 +287,7 @@ class FlagMessage(Message):
         """
         base_char = ord('A')
         p = self.pos
-        return "Flag position: ( %c%d )"%(base_char + p[0], p[1] + 1)
+        return "Flag position: ( %c%d )" % (base_char + p[0], p[1] + 1)
 
     def __eq__(self, obj):
         """
@@ -288,7 +303,7 @@ class WinningMessage(Message):
     """
     Instance variables:
     String result
-    
+
     """
 
     def __init__(self, result):
@@ -313,7 +328,7 @@ class WinningMessage(Message):
         No
 
         """
-        return "Player %s"%(result)
+        return "Player %s" % (self.result)
 
     def __eq__(self, obj):
         """
@@ -329,14 +344,14 @@ class ErrorMessage(Message):
     """
     Instance variables:
     String error
-    
+
     """
     def __init__(self, error):
         """
         String -> ErrorMessage
 
         Constructor an ErrorMessage initialized with the given error
-        message. 
+        message.
 
         """
         self.error = error

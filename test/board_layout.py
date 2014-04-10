@@ -1,6 +1,7 @@
 import unittest
 import app.board_layout as layout
-from app.position import * 
+from app.position import *
+
 
 class TestBoardLayout(unittest.TestCase):
     def test_adjacent_spaces_are_adjacent(self):

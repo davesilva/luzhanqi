@@ -1,4 +1,4 @@
-""" 
+"""
 A Position is a tuple of Numbers (row, column)
 """
 
@@ -11,7 +11,8 @@ _CAMP_LOCATIONS = [(1, 2), (1, 4), (2, 3), (3, 2), (3, 4)]
 _board_graph = {}
 _BOARD_FILE = "app/board_graph"
 STATION, CAMP, HEADQUARTERS = range(0, 3)
-TYPE_MAP = {"S": STATION,"C": CAMP, "H": HEADQUARTERS, "R": STATION}
+TYPE_MAP = {"S": STATION, "C": CAMP, "H": HEADQUARTERS, "R": STATION}
+
 
 class Space:
     """
@@ -37,7 +38,7 @@ class Space:
         """
         -> [Generator_of Position]
 
-        Returns a generator of positions that are adjacent to this space. 
+        Returns a generator of positions that are adjacent to this space.
 
         """
         return iter(self.adjacent)
@@ -53,14 +54,15 @@ def is_adjacent(v1, v2):
     """
     Position Position -> Boolean
 
-    Checks if the given 2 positions are adjacent to each other. 
+    Checks if the given 2 positions are adjacent to each other.
 
     """
     return (v2 in _board_graph[v1])
 
+
 def is_camp(p):
     """
-    Position -> Boolean 
+    Position -> Boolean
 
     Checks if the give position is a camp
 
@@ -95,21 +97,20 @@ def iterate_adjacent(position):
     """
     return iter(_board_graph[position])
 
+
 def generate_board():
     """
     ->
 
-    Generates all positions and their connection for the board. 
+    Generates all positions and their connection for the board.
 
     """
     b = open(_BOARD_FILE, "r").readlines()
     for line in b:
         raw = line.strip().split(" ")
-        _board_graph[str_to_pos(raw[0])] = Space(                                        \
-                                (raw[1] == "R"),                             \
-                                TYPE_MAP[raw[1]],                            \
-                                {str_to_pos(str_pos) for str_pos in raw[2:]})
+        _board_graph[str_to_pos(raw[0])] = Space(
+            (raw[1] == "R"),
+            TYPE_MAP[raw[1]],
+            {str_to_pos(str_pos) for str_pos in raw[2:]})
 
 generate_board()
-
-

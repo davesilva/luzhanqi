@@ -3,7 +3,7 @@
 import app.board as board
 import app.logging_config as logconfig
 from app.config import Config
-import sys, os
+import os
 
 # Borders #
 VERT_L = "│"
@@ -22,7 +22,8 @@ WIDTH = 4
 
 topline = CUPLEFT + (HORZ_L * WIDTH + T_UP) * 11 + HORZ_L * WIDTH + CUPRIGHT
 midline = WRDRIGHT + (HORZ_L * WIDTH + CROSS) * 11 + HORZ_L * WIDTH + WRDLEFT
-botline = CDWNLEFT + (HORZ_L * WIDTH + T_DOWN) * 11 + HORZ_L * WIDTH + CDWNRIGHT
+botline = (CDWNLEFT + (HORZ_L * WIDTH + T_DOWN) * 11
+           + HORZ_L * WIDTH + CDWNRIGHT)
 
 config = Config()
 
@@ -36,7 +37,7 @@ def print_for_player(s, player):
 
 def print_piece(p):
     if p.owner == board.Owner.PLAYER:
-        r = next(iter(p.ranks))
+        r = p.get_rank()
         r = "\033[34m%s\033[0m" % (str(r))
     else:
         r = "\033[31mX\033[0m"
