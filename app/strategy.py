@@ -37,7 +37,7 @@ def action_value(board, src, dest):
 			LOSING_PIECE_FACTOR * (loss + tie) + \
 			COMMONALITY_FACTOR * piece_commonality_rating(board, src) + \
 			PROXIMITY_FACTOR * proximity_rating(board, src, dest) + \
-			BRAVE_FACTOR * brave_rating() 
+			BRAVE_FACTOR * brave_rating(board, src) 
 		return value
 
 def piece_worth(board, pos):
