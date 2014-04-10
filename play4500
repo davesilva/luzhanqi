@@ -35,34 +35,34 @@ game_board = ()
 forfeit = False
 
 
-def next_best_move():
+
+ def next_best_move():
     global best_move
     global best_move_weight
     global game_board
     global computing
     global forfeit
-
+  
     computing = True
     all_moves = game_board.iterate_all_moves(board.Owner.PLAYER)
-    best_move = next(all_moves)
-    #best_move_weight = random.randint(0, 100)
-    (pos_from, pos_to) = best_move
-    bestmove_weight = strategy.action_value(game_board, pos_from, pos_to)
+ 
+    # Check if we still have moves left, forfeit if not
+    try:
+        best_move = next(all_moves)
+    except StopIteration:
+        forfeit = True
+        return
 
+    best_move_weight = random.randint(0, 100)
     while computing:
         try:
             move = next(all_moves)
         except StopIteration:
-            forfeit = True
             return
-        (pos_from, pos_to) = move
-        weight = strategy.action_value(game_board, pos_from, pos_to)
+  
+        weight = random.randint(0, 100)
         if weight > best_move_weight:
-            try:
-                best_move = next(all_moves)
-            except StopIteration:
-                forfeit = True
-                return
+            best_move = move
             best_move_weight = weight
 
 
