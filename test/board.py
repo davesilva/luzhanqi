@@ -120,6 +120,16 @@ class TestBoard(unittest.TestCase):
         self.assertFalse((1, 2) in list(b.iterate_moves_for_piece(p1)))
         self.assertTrue((0, 1) in list(b.iterate_moves_for_piece(opponent)))
 
+    def test_iterate_railroad_moves(self):
+        pr = Piece((4, 5), Owner.PLAYER, Rank('4'))
+        b = Board().place_piece(pr)
+        expected = [((4, 5), m) for m in [(4, 4), (4, 6), (3, 5), (3, 4)]] + \
+                [((4, 5), m) for m in b.iterate_railroad_moves(pr)]
+        calcd = list(b.iterate_all_moves(Owner.PLAYER))
+        print(expected)
+        print(calcd)
+        self.assertEqual(list(b.iterate_all_moves(Owner.PLAYER)), expected)
+
     def test_iterate_all_moves_with_one_piece(self):
         b = Board().place_piece(p2)
 
