@@ -76,9 +76,12 @@ def piece_commonality_rating(board, src):
 	src_rank = src_piece.get_rank()
 	num_same_pieces = len(list(
 		filter(lambda p: p.get_rank() == src_rank, lop)))
+	num_orig = RANK_INIT_AMT[src_rank]
+
+	current_present = num_same_pieces / num_orig 
+	rarity_rating = num_orig / 3 # 3 is max init amt of most popular piece
 	
-	rarity_rating = RANK_INIT_AMT[src_rank] / 3
-	rating = (num_same_pieces/num_orig) + num_same_pieces
+	rating = rarity_rating + current_present
 	return rating / (max - min)
 
 
