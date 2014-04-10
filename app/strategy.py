@@ -112,7 +112,10 @@ def brave_rating(board, pos):
 	subj_worth = RANK_WORTH[rank]
 	lop = board.iterate_pieces(Owner.PLAYER)
 	higher_worth_pieces = list(
-		filter(lambda p: RANK_WORTH[p.get_rank()] >= subj_worth, lop))
+		filter(lambda p: \
+			p.get_rank() != Rank('F') and \
+			p.get_rank() != Rank('L') and \
+			RANK_WORTH[p.get_rank()] >= subj_worth, lop))
 	num_higher_worth_pieces = len(higher_worth_pieces)
 	return num_higher_worth_pieces / (max - min)
 
