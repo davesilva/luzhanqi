@@ -391,9 +391,9 @@ class Board:
 
         """
         assert(board_layout.is_headquarters(position))
-        updated = self
 
-        return updated
+        piece = self.piece_at(position)
+        return self.exclude_ranks(piece, set(piece.ranks()) - {Rank('F')})
 
     def initialize_opponent_pieces(self):
         """
@@ -414,6 +414,7 @@ class Board:
         return board
 
 SOLDIER_RANKS = {Rank(str(r)) for r in range(1, 10)}
+ALL_RANKS = SOLDIER_RANKS.union({Rank('F'), Rank('L'), Rank('B')})
 
 
 class Piece:
@@ -480,6 +481,7 @@ class Piece:
         """
         ranks_to_remove = set(self.ranks()).intersection(set(ranks))
         ranks_to_keep = set(self.ranks()).difference(ranks_to_remove)
+        soldiers_to_keep = ranks_to_keep.intersection(SOLDIER_RANKS)
         new_numerators = {}
         new_denominators = {}
 
@@ -495,6 +497,18 @@ class Piece:
             else:
                 new_numerators[rank] = self.prob_numerators[rank]
                 new_denominators[rank] = self.prob_denominators[rank]
+
+        if len(soldiers_to_keep) == 0:
+            if Rank('B') in new_numerators:
+                new_numerators[Rank('B')] = Fraction(1)
+                new_denominators[Rank('B')] = Fraction(1)
+            else:
+                if Rank('L') in new_numerators:
+                    new_numerators[Rank('L')] = Fraction(1)
+                    new_denominators[Rank('L')] = Fraction(1)
+                else:
+                    new_numerators[Rank('F')] = Fraction(1)
+                    new_denominators[Rank('F')] = Fraction(1)
 
         return Piece(self.position, self.owner,
                      new_numerators, new_denominators)
