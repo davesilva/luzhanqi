@@ -1,6 +1,7 @@
 import copy
 import logging
 import app.board_layout as board_layout
+import itertools
 from fractions import Fraction
 
 """
