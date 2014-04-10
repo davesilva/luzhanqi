@@ -15,4 +15,4 @@ def pos_to_str(pos):
 
 # String -> Position
 def str_to_pos(s):
-    return Position(ord(s[0]) - ord('A'), int(s[1:]) - 1)
+    return (ord(s[0]) - ord('A'), int(s[1:]) - 1)

@@ -129,7 +129,7 @@ class TestBoard(unittest.TestCase):
 
     def test_iterate_moves_for_piece_forbids_attacking_in_camp(self):
         b = Board().place_piece(p1).place_piece(opponent)
-        self.assertEqual(len(list(b.iterate_moves_for_piece(p1))), 3)
+        self.assertEqual(len(list(b.iterate_moves_for_piece(p1))), 14)
         self.assertFalse((1, 2) in list(b.iterate_moves_for_piece(p1)))
         self.assertTrue((0, 1) in list(b.iterate_moves_for_piece(opponent)))
 
@@ -139,10 +139,24 @@ class TestBoard(unittest.TestCase):
         expected = [((4, 5), m) for m in [(4, 4), (4, 6), (3, 5), (3, 4)]] + \
                 [((4, 5), m) for m in b.iterate_railroad_moves(pr)]
         calcd = list(b.iterate_all_moves(Owner.PLAYER))
-        print(expected)
-        print(calcd)
-        self.assertEqual(list(b.iterate_all_moves(Owner.PLAYER)), expected)
+        # sort the lists so that the equals works out
+        expected.sort()
+        calcd.sort()
+        self.assertEqual(calcd, expected)
 
+    def test_iterate_railroad_moves_blocking_piece(self):
+        pr = Piece((4, 5), Owner.PLAYER, Rank('4'))
+        pb = Piece((4, 6), Owner.OPPONENT, Rank('4'))
+        b = Board().place_piece(pr)
+        b = b.place_piece(pb)
+        expected = [((4, 5), m) for m in [(4, 4), (4, 6), (3, 5), (3, 4)]] + \
+                [((4, 5), m) for m in b.iterate_railroad_moves(pr)]
+        calcd = list(b.iterate_all_moves(Owner.PLAYER))
+        # sort the lists so that the equals works out
+        expected.sort()
+        calcd.sort()
+        self.assertEqual(calcd, expected)
+    
     def test_iterate_all_moves_with_one_piece(self):
         b = Board().place_piece(p2)
 
