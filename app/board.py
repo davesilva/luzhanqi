@@ -305,26 +305,12 @@ class Board:
         """
         move_type = msg.movetype
         if move_type == "move":
-            return self.move_piece(msg.posfrom, msg.posto)
+            # If a piece moves, it cannot be a landmine
+            piece = self.piece_at(msg.posfrom)
+            updated = self.exclude_ranks(piece, {Rank('L')})
+            return updated.move_piece(msg.posfrom, msg.posto)
 
-        attacking_piece = self.piece_at(msg.posfrom)
-        defending_piece = self.piece_at(msg.posto)
-        if attacking_piece.owner == Owner.OPPONENT:
-            opponent_piece = attacking_piece
-            player_piece = defending_piece
-            attack_outcome = move_type
-        else:
-            opponent_piece = defending_piece
-            player_piece = attacking_piece
-            if move_type == "win":
-                attack_outcome = "loss"
-            elif move_type == "loss":
-                attack_outcome = "win"
-            else:
-                attack_outcome = "tie"
-
-        updated = self.update_probabilities(opponent_piece,
-                                            player_piece, attack_outcome)
+        updated = self.update_probabilities_from_attack(msg)
 
         if move_type == "win":
             without_loser = updated.remove_piece(msg.posto)
@@ -334,20 +320,29 @@ class Board:
         if move_type == "tie":
             return updated.remove_piece(msg.posfrom).remove_piece(msg.posto)
 
-    def update_probabilities(self, opponent_piece,
-                             player_piece, attack_result):
+    def update_probabilities_from_attack(self, msg):
         """
-        Piece Piece Result -> Board
+        MoveMessage -> Board
 
-        where Result is one of: "win", "loss" or "tie"
-
-        Updates all of the opponent_piece probabilities given an opponent
-        piece and the result of an attack involving that piece.
+        Updates all of the opponent_piece probabilities given an
+        attack message.
 
         """
-        assert(opponent_piece.owner == Owner.OPPONENT)
-        assert(player_piece.owner == Owner.PLAYER)
-        assert(attack_result in ["win", "loss", "tie"])
+        attacking_piece = self.piece_at(msg.posfrom)
+        defending_piece = self.piece_at(msg.posto)
+        if attacking_piece.owner == Owner.OPPONENT:
+            opponent_piece = attacking_piece
+            player_piece = defending_piece
+            attack_result = msg.movetype
+        else:
+            opponent_piece = defending_piece
+            player_piece = attacking_piece
+            if msg.movetype == "win":
+                attack_result = "loss"
+            elif msg.movetype == "loss":
+                attack_result = "win"
+            else:
+                attack_result = "tie"
 
         ranks_to_exclude = []
         for rank in opponent_piece.ranks():
@@ -379,6 +374,22 @@ class Board:
 
         return Board(new_list)
 
+    def set_flag(self, position):
+        """
+        Position -> Board
+
+        Indicates that the given position is the position of
+        the opponent's flag.
+
+        Precondition: The given position must be located in
+                      a headquarters.
+
+        """
+        assert(board_layout.is_headquarters(position))
+
+        piece = self.piece_at(position)
+        return self.exclude_ranks(piece, set(piece.ranks()) - {Rank('F')})
+
     def initialize_opponent_pieces(self):
         """
         -> Board
@@ -398,6 +409,7 @@ class Board:
         return board
 
 SOLDIER_RANKS = {Rank(str(r)) for r in range(1, 10)}
+ALL_RANKS = SOLDIER_RANKS.union({Rank('F'), Rank('L'), Rank('B')})
 
 
 class Piece:
@@ -462,8 +474,9 @@ class Piece:
         possible ranks, and returns the modified Piece.
 
         """
-        ranks_to_remove = set(ranks)
+        ranks_to_remove = set(self.ranks()).intersection(set(ranks))
         ranks_to_keep = set(self.ranks()).difference(ranks_to_remove)
+        soldiers_to_keep = ranks_to_keep.intersection(SOLDIER_RANKS)
         new_numerators = {}
         new_denominators = {}
 
@@ -479,6 +492,18 @@ class Piece:
             else:
                 new_numerators[rank] = self.prob_numerators[rank]
                 new_denominators[rank] = self.prob_denominators[rank]
+
+        if len(soldiers_to_keep) == 0:
+            if Rank('B') in new_numerators:
+                new_numerators[Rank('B')] = Fraction(1)
+                new_denominators[Rank('B')] = Fraction(1)
+            else:
+                if Rank('L') in new_numerators:
+                    new_numerators[Rank('L')] = Fraction(1)
+                    new_denominators[Rank('L')] = Fraction(1)
+                else:
+                    new_numerators[Rank('F')] = Fraction(1)
+                    new_denominators[Rank('F')] = Fraction(1)
 
         return Piece(self.position, self.owner,
                      new_numerators, new_denominators)
