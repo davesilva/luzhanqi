@@ -36,8 +36,8 @@ def action_value(board, src, dest):
 			WORTH_FACTOR * piece_worth(board, src) + \
 			LOSING_PIECE_FACTOR * (loss + tie) + \
 			COMMONALITY_FACTOR * piece_commonality_rating(board, src) + \
-			PROXIMITY_FACTOR * proximity_rating(board, src, dest) + \
-			BRAVE_FACTOR * brave_rating() 
+			PROXIMITY_FACTOR * proximity_rating(board, src, dest) #+ \
+			#BRAVE_FACTOR * brave_rating() 
 		return value
 
 def piece_worth(board, pos):
@@ -72,12 +72,16 @@ def piece_commonality_rating(board, src):
 	max = 2
 	min = 2/3
 	lop = board.iterate_pieces(Owner.PLAYER)
+	src_piece = board.piece_at(src)
+	src_rank = src_piece.get_rank()
 	num_same_pieces = len(list(
-		filter(lambda p: p.get_rank() == board.piece_at(src).get_rank(), lop)))
-	piece = board.piece_at(pos)
-	rank = piece.get_rank()
-	rarity_rating = RANK_INIT_AMT[rank] / 3
-	rating = (num_same_pieces/num_orig) + num_same_pieces
+		filter(lambda p: p.get_rank() == src_rank, lop)))
+	num_orig = RANK_INIT_AMT[src_rank]
+
+	current_present = num_same_pieces / num_orig 
+	rarity_rating = num_orig / 3 # 3 is max init amt of most popular piece
+	
+	rating = rarity_rating + current_present
 	return rating / (max - min)
 
 
