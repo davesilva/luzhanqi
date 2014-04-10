@@ -48,18 +48,23 @@ def next_best_move():
     # Check if we still have moves left, forfeit if not
     try:
         best_move = next(all_moves)
+        src = best_move[0]
+        dest = best_move[1]
+        best_move_weight = strategy.action_value(game_board, src, dest)
     except StopIteration:
         forfeit = True
         return
 
-    best_move_weight = random.randint(0, 100)
+    
     while computing:
         try:
             move = next(all_moves)
+            src = move[0]
+            dest = move[1]
+            weight = strategy.action_value(game_board, src, dest)
         except StopIteration:
             return
-  
-        weight = random.randint(0, 100)
+
         if weight > best_move_weight:
             best_move = move
             best_move_weight = weight
