@@ -18,6 +18,7 @@ LOSING_PIECE_FACTOR = 0.3
 COMMONALITY_FACTOR = 0.05
 PROXIMITY_FACTOR = 0.25
 BRAVE_FACTOR = 0.1
+MOVE_VALUE = 0.2
 
 
 def action_value(board, src, dest):
@@ -29,7 +30,7 @@ def action_value(board, src, dest):
 	"""
 
 	if board.piece_at(dest) == None:
-		return 0.5
+		return MOVE_VALUE
 	else:
 		(win, loss, tie) = prob_win_loss_tie(board, src, dest)
 		value = \
