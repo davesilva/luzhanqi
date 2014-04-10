@@ -58,7 +58,11 @@ def next_best_move():
         (pos_from, pos_to) = move
         weight = strategy.action_value(game_board, pos_from, pos_to)
         if weight > best_move_weight:
-            best_move = move
+            try:
+                best_move = next(all_moves)
+            except StopIteration:
+                forfeit = True
+                return
             best_move_weight = weight
 
 
