@@ -2,7 +2,7 @@ from app.board import Board, Rank, Owner
 from app.board_layout import *
 
 # Note that we are ONLY considering movable pieces i.e. no landmines or flags
-# May need to consider the case of a movable piece placed in hq?
+# TODO May need to consider the case of a movable piece placed in hq?
 RANK_WORTH = {Rank('1'):2, Rank('2'):2, Rank('3'):3, Rank('4'):4, Rank('5'):5, 
 	Rank('6'):6, Rank('7'):7, Rank('8'):8, Rank('9'):9, Rank('B'):5}
 
@@ -24,11 +24,10 @@ MOVE_VALUE = 0.2
 def action_value(board, src, dest):
 	"""
 	Board Position Position -> Number
+
 	Returns the value of an attack from 0 - 1
 
-	TODO: VALUE OF MOVES
 	"""
-
 	if board.piece_at(dest) == None:
 		return MOVE_VALUE
 	else:
@@ -44,7 +43,9 @@ def action_value(board, src, dest):
 def piece_worth(board, pos):
 	"""
 	Board Position -> Number
+
 	Returns the hard-coded worth of a piece
+
 	"""
 	max = 9
 	min = 2
@@ -67,8 +68,10 @@ def prob_win_loss_tie(board, src, dest):
 def piece_commonality_rating(board, src):
 	"""
 	Board Position -> Number
+
 	Rates the commonality of the piece in the 
 	board with ratio to their initial amount
+
 	"""
 	max = 2
 	min = 2/3
@@ -89,8 +92,10 @@ def piece_commonality_rating(board, src):
 def proximity_rating(board, src, dest):
 	"""
 	Board Position Position -> Number
+
 	Produces a proximity rating of destination to 
 	flag and destination to a camp 
+
 	"""
 	max = 11
 	min = 0
@@ -99,12 +104,15 @@ def proximity_rating(board, src, dest):
 	else:
 		return dest[0] / (max - min)
 
+
 def brave_rating(board, pos):
 	"""
 	Board Position -> Number
+
 	Determines how brave the piece can be by 
 	comparing how many pieces have a higher or
 	equal worth than it
+
 	"""
 	max = 18
 	min = 0
