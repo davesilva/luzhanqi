@@ -70,6 +70,17 @@ class Piece:
         return Piece(new_posn, self.owner,
                      self.prob_numerators, self.prob_denominators)
 
+    def is_stationary(self):
+        """
+        -> bool
+
+        Returns true if this piece cannot be moved i.e. if it is a flag
+        or a landmine or positioned at a headquarter.
+
+        """
+        return (board_layout.is_headquarters(self.position) or
+                self.probability(Rank('L')) + self.probability(Rank('F')) == 1)
+
     def exclude_ranks(self, ranks):
         """
         set(Rank) -> Piece
@@ -154,17 +165,6 @@ class Piece:
         return Piece(self.position, self.owner,
                      new_numerators, new_denominators)
 
-    def is_stationary(self):
-        """
-        -> bool
-
-        Returns true if this piece cannot be moved i.e. if it is a flag
-        or a landmine or positioned at a headquarter.
-
-        """
-        return (board_layout.is_headquarters(self.position) or
-                self.probability(Rank('L')) + self.probability(Rank('F')) == 1)
-
     def probability(self, rank):
         """
         Rank -> Fraction
@@ -218,6 +218,27 @@ class Piece:
 
         return (p_win, p_tie, p_loss)
 
+    def get_rank(self):
+        """
+        -> Rank
+
+        Returns this piece's rank.
+        Precondition: The piece must have an owner of Owner.PLAYER
+
+        """
+        assert(self.owner == Owner.PLAYER)
+        return next(self.ranks())
+
+    def ranks(self):
+        """
+        -> iter(Rank)
+
+        Returns an iterator which will iterate over all of this
+        piece's possible ranks.
+
+        """
+        return iter(self.prob_numerators.keys())
+
     def __eq__(self, piece):
         """
         object -> bool
@@ -259,24 +280,3 @@ class Piece:
         (x, y) = self.position
         rank = str(self.get_rank())
         return "( %c%d %c )" % (ord('A') + x, y + 1, rank)
-
-    def get_rank(self):
-        """
-        -> Rank
-
-        Returns this piece's rank.
-        Precondition: The piece must have an owner of Owner.PLAYER
-
-        """
-        assert(self.owner == Owner.PLAYER)
-        return next(self.ranks())
-
-    def ranks(self):
-        """
-        -> iter(Rank)
-
-        Returns an iterator which will iterate over all of this
-        piece's possible ranks.
-
-        """
-        return iter(self.prob_numerators.keys())
