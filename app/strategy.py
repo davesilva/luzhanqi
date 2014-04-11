@@ -100,9 +100,9 @@ def proximity_rating(board, src, dest):
 	max = 11
 	min = 0
 	if is_camp(dest) : 
-		return (dest[0] + 1) / (max - min)
+		return (dest[1] + 1) / (max - min)
 	else:
-		return dest[0] / (max - min)
+		return dest[1] / (max - min)
 
 
 def brave_rating(board, pos):
