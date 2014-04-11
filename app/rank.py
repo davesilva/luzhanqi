@@ -1,13 +1,13 @@
 class Rank:
     """
     Instance variables:
-    Char rank
+    str rank
 
     """
 
     def __init__(self, rank):
         """
-        Char -> Rank
+        str -> Rank
 
         Constructs a Rank with the given rank
 
@@ -16,12 +16,11 @@ class Rank:
 
     def __str__(self):
         """
-        -> String
+        -> str
 
         Returns a human readable string of this Rank
 
         >>> print(Rank('L'))
-
         L
 
         """
@@ -39,7 +38,7 @@ class Rank:
 
     def __hash__(self):
         """
-        -> Number
+        -> int
 
         Hashes this instance.
 
@@ -48,7 +47,7 @@ class Rank:
 
     def is_soldier(self):
         """
-        -> Boolean
+        -> bool
 
         Returns true if this piece is a soldier (rank 1-9).
 
@@ -57,7 +56,7 @@ class Rank:
 
     def wins_against(self, other_rank):
         """
-        -> Boolean
+        -> bool
 
         Returns true if a piece of this rank can defeat a
         piece of other_rank.
@@ -77,7 +76,7 @@ class Rank:
 
     def loses_against(self, other_rank):
         """
-        -> Boolean
+        -> bool
 
         Returns true if a piece of other_rank can defeat a
         piece of this rank.
@@ -87,7 +86,7 @@ class Rank:
 
     def ties_against(self, other_rank):
         """
-        -> Boolean
+        -> bool
 
         Returns true if a piece of this rank will tie with
         a piece of other rank.

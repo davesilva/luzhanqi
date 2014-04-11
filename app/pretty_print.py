@@ -29,6 +29,11 @@ config = Config()
 
 
 def print_for_player(s, player):
+    """
+    str int -> str
+
+    Returns str representing the message
+    """
     if player == config.turn:
         return "\033[34m%s\033[0m" % s
     else:
@@ -36,6 +41,11 @@ def print_for_player(s, player):
 
 
 def print_piece(p):
+    """
+    Piece -> str
+
+    Returns a str representing the Piece
+    """
     if p.owner == board.Owner.PLAYER:
         r = p.get_rank()
         r = "\033[34m%s\033[0m" % (str(r))
@@ -45,6 +55,11 @@ def print_piece(p):
 
 
 def print_board(aboard):
+    """
+    Board -> str
+
+    Returns a str representing the board
+    """
     drawn = ""
 
     drawn += "  " + topline + "\n"
@@ -73,6 +88,11 @@ def print_board(aboard):
 
 
 def draw_message(message):
+    """
+    Message ->
+
+    Log the message
+    """
     if os.path.exists(logconfig.logs_dir):
         fname = "player%d" % (config.turn) + ".draw"
         fp = open(logconfig.logs_dir + "/" + fname, "a")
@@ -82,6 +102,11 @@ def draw_message(message):
 
 
 def draw_board(aboard):
+    """
+    Board ->
+
+    Log the drawn out board
+    """
     if os.path.exists(logconfig.logs_dir):
         buf = print_board(aboard)
         fname = "player%d" % (config.turn) + ".draw"

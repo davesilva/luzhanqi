@@ -18,9 +18,19 @@ parser.add_option("-t",
 
 
 class Config:
-    # -> Config
-    # Create a new Config module, parsing command line arguments
+    """
+    Instance variables:
+    float time
+    int player
+
+    """
     def __init__(self):
+        """
+        -> Config
+
+        Create a new Config module, parsing command line arguments
+        
+        """
         (options, args) = parser.parse_args()
 
         match = re.search(TIME_REGEX, options.time or "")
@@ -36,12 +46,20 @@ class Config:
 
         self.turn = int(options.turn)
 
-    # -> Integer
-    # Get this player's turn (1 if the player should go first, 2 if second)
     def get_turn(self):
+        """
+        -> int
+       
+        Get this player's turn (1 if the player should go first, 2 if second)
+        
+        """
         return self.turn
 
-    # -> Integer
-    # Get the time per move in milliseconds
     def get_time(self):
+        """
+        -> int
+        
+        Get the time per move in milliseconds
+        
+        """
         return self.time

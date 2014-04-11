@@ -6,31 +6,43 @@ from app.rank import Rank
 
 
 """
-A Position is a tuple of Numbers (row, column)
+A Position is a (row, col) where
+row is 0 - 11 and col is 0 - 4.
 """
 
 log = logging.getLogger("board")
 
 
 class PieceNotFoundException(Exception):
+    """
+    Exception thrown when a piece is not found when trying to move
+    a piece that does not exist.
+
+    """
 
     def __init__(self, msg):
         self.msg = msg
 
     def __str__(self):
+        """
+        -> str
+
+        Returns the message causing exception
+
+        """
         return repr(self.msg)
 
 
 class Board:
     """
     Instance variables:
-    [Listof Piece] pieces_list
+    list(Piece) pieces_list
 
     """
 
     def __init__(self, pieces_list=[]):
         """
-        [Listof Piece] -> Board
+        list(Piece) -> Board
         Constructs a Board with the specified list of pieces.
 
         """
@@ -80,7 +92,7 @@ class Board:
 
     def is_space_blocked_for(self, position, owner):
         """
-        Position Owner -> Boolean
+        Position Owner -> bool
 
         Checks if the given position
         - can be moved into by the given player
@@ -99,7 +111,7 @@ class Board:
 
     def iterate_pieces(self, owner):
         """
-        Owner -> [Generator_of Piece]
+        Owner -> iter(Piece)
 
         Returns a generator for all pieces owned by the given player
 
@@ -109,18 +121,13 @@ class Board:
 
     def iterate_moves_for_piece(self, piece):
         """
-        Piece -> [Generator_of Position]
+        Piece -> iter(Position)
 
         Returns a generator for all possible moves that can
         be made by the given piece. A move is a position that the given
         piece can consider for relocation or attack.
 
         """
-        # TODO: if given piece is an engineer, also need to consider
-        # railway positions i.e. not just adjacent pieces
-        # The paths to these positions should also not be blocked by
-        # the player/opponent's pieces.
-
         if piece.is_stationary():
             return iter([])
 
@@ -131,7 +138,7 @@ class Board:
 
     def iterate_all_moves(self, owner):
         """
-        Owner -> [Generator_of (Position, Position)]
+        Owner -> iter((Position, Position))
 
         Returns a generator for all possible moves that can be made
         by the given player. A move is a tuple of positions
@@ -146,7 +153,7 @@ class Board:
 
     def serialize(self):
         """
-        -> String
+        -> str
 
         Serialize this Board.
 
@@ -155,6 +162,12 @@ class Board:
                 " ".join([p.serialize() for p in self.pieces_list]) + " )")
 
     def dump_debug_board(self):
+        """
+        -> 
+        
+        Logs the current state of the board.
+        
+        """
         log.debug(" | ".join([str(p) for p in self.pieces_list]))
 
     def remove_piece(self, pos):
@@ -234,7 +247,7 @@ class Board:
 
     def exclude_ranks(self, piece, ranks):
         """
-        Piece [Ranks] -> Board
+        Piece list(ranks) -> Board
 
         Excludes the given set of ranks for the given piece, returning
         the updated board.
@@ -291,7 +304,7 @@ class Board:
 
 def _initial_probability_for(position):
     """
-    Position -> Dictionary(Rank, Fraction)
+    Position -> dict(Rank, Fraction)
 
     Returns the initial probability dictionary for a piece placed
     at the given position. Probabilities are calculated as follows:

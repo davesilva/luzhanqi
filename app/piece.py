@@ -7,7 +7,11 @@ ALL_RANKS = SOLDIER_RANKS.union({Rank('F'), Rank('L'), Rank('B')})
 
 
 class Owner:
+    """
+    An enumeration indicating the owner of any piece 
+    - either Owner.PLAYER or Owner.OPPONENT
 
+    """
     PLAYER = 0
     OPPONENT = 1
 
@@ -17,8 +21,8 @@ class Piece:
     Instance variables:
     Position                    position
     Owner                       owner
-    Dictionary(Rank, Fraction)  numerators
-    Dictionary(Rank, Fraction)  denominators
+    dict(Rank, Fraction)  numerators
+    dict(Rank, Fraction)  denominators
 
     The numerators and denominators dictionaries map a rank
     to a probability (numerators[rank]/denominators[rank]).
@@ -31,7 +35,7 @@ class Piece:
         Position Owner Rank -> Piece
            --or--
         Position Owner
-           Dictionary(Rank, Number) Dictionary(Rank, Number) -> Piece
+           dict(Rank, Number) dict(Rank, Number) -> Piece
 
         Constructs an instance of Piece initialized with its position,
         owner and a dictionary that maps all possible ranks to the
@@ -152,7 +156,7 @@ class Piece:
 
     def is_stationary(self):
         """
-        -> Boolean
+        -> bool
 
         Returns true if this piece cannot be moved i.e. if it is a flag
         or a landmine or positioned at a headquarter.
@@ -163,7 +167,7 @@ class Piece:
 
     def probability(self, rank):
         """
-        -> Fraction
+        Rank -> Fraction
 
         Returns the probability that this piece has the given Rank.
 
@@ -189,7 +193,7 @@ class Piece:
 
     def expected_attack_outcome(self, other_piece):
         """
-        -> (Fraction, Fraction, Fraction)
+        Piece -> (Fraction, Fraction, Fraction)
 
         Returns the expected outcome of an attack made by this piece
         against other_piece. The expected outcome is returned as a tuple
@@ -216,7 +220,7 @@ class Piece:
 
     def __eq__(self, piece):
         """
-        Piece -> Boolean
+        object -> bool
 
         Checks if the given Piece is the same as this instance
         """
@@ -227,6 +231,11 @@ class Piece:
                 self.owner == piece.owner)
 
     def __str__(self):
+        """
+        -> str
+
+        Returns a string describing this piece
+        """
         (x, y) = self.position
 
         if self.owner == Owner.PLAYER:
@@ -240,7 +249,7 @@ class Piece:
 
     def serialize(self):
         """
-        -> String
+        -> str
 
         Serialize this Piece.
         Precondition: The piece must have an owner of Owner.PLAYER
@@ -264,7 +273,7 @@ class Piece:
 
     def ranks(self):
         """
-        -> Generator_of(Rank)
+        -> iter(Rank)
 
         Returns an iterator which will iterate over all of this
         piece's possible ranks.
