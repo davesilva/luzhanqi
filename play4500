@@ -46,6 +46,7 @@ def next_best_move():
     computing = True
     all_moves = game_board.iterate_all_moves(board.Owner.PLAYER)
 
+    best_move_weight = -1
     # Check if we still have moves left, forfeit if not
     try:
         best_move = next(all_moves)
@@ -113,8 +114,7 @@ def main():
             compute_thread.start()
             compute_thread.join((config.time / 1000) - ADJUST)
             computing = False
-            best_move_weight = -1
-            
+
             if(forfeit):
                 fmsg = message.ForfeitMessage()
                 io.send(fmsg)
