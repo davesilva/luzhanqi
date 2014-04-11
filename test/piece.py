@@ -2,6 +2,7 @@ import unittest
 from app.piece import Piece
 from app.rank import Rank
 from app.board import Board, Owner
+from fractions import Fraction
 
 opponent_board = Board().initialize_opponent_pieces()
 p1 = Piece((0, 1), Owner.PLAYER, Rank('1'))
