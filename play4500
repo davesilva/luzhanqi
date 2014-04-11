@@ -20,7 +20,7 @@ FIRST_MOVE = ((2, 1), (3, 2))
 best_move = None
 
 # weight of the best move
-best_move_weight = 0
+best_move_weight = -1
 
 # Should the thread keep going
 computing = True
@@ -113,6 +113,8 @@ def main():
             compute_thread.start()
             compute_thread.join((config.time / 1000) - ADJUST)
             computing = False
+            best_move_weight = -1
+            
             if(forfeit):
                 fmsg = message.ForfeitMessage()
                 io.send(fmsg)
