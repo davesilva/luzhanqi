@@ -51,7 +51,7 @@ def piece_worth(board, pos):
 	min = 2
 	piece = board.piece_at(pos)
 	rank = piece.get_rank()
-	return RANK_WORTH[rank] / (max - min)
+	return (RANK_WORTH[rank] - min) / (max - min)
 
 def prob_win_loss_tie(board, src, dest):
 	"""
@@ -86,7 +86,7 @@ def piece_commonality_rating(board, src):
 	rarity_rating = num_orig / 3 # 3 is max init amt of most popular piece
 	
 	rating = rarity_rating + current_present
-	return rating / (max - min)
+	return (rating - min)/ (max - min)
 
 
 def proximity_rating(board, src, dest):
