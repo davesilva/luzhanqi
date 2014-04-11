@@ -48,6 +48,24 @@ class Board:
         """
         self.pieces_list = pieces_list
 
+    def initialize_opponent_pieces(self):
+        """
+        -> Board
+
+        Adds all of the opponent's pieces to the board in their
+        initial configuration.
+
+        """
+        board = self
+
+        for x in range(0, 5):
+            for y in range(6, 12):
+                (numerators, denominators) = _initial_probability_for((x, y))
+                piece = Piece((x, y), Owner.OPPONENT, numerators, denominators)
+                board = board.place_piece(piece)
+
+        return board
+
     def serialize(self):
         """
         -> str
@@ -69,6 +87,16 @@ class Board:
         new_list.append(piece)
         return Board(new_list)
 
+    def piece_at(self, position):
+        """
+        Position -> (Piece | None)
+        
+        Returns the piece at the given position.
+        
+        """
+        return next(
+            (p for p in self.pieces_list if p.position == position), None)
+ 
     def move_piece(self, src, dest):
         """
         Position Position -> Board
@@ -105,43 +133,6 @@ class Board:
         else:
             raise PieceNotFoundException("Cannot remove piece from ( %c%d )"
                                          % (ord('A') + pos[0], pos[1] + 1))
-
-    def update(self, msg):
-        """
-        MoveMessage -> Board
-
-        Move pieces if a "move" or "win" is indicated by the given
-        MoveMessage, otherwise if a "loss" or "tie" is indicated,
-        then remove pieces appropriately.
-
-        """
-        move_type = msg.movetype
-        if move_type == "move":
-            # If a piece moves, it cannot be a landmine
-            piece = self.piece_at(msg.posfrom)
-            updated = self.exclude_ranks(piece, {Rank('L')})
-            return updated.move_piece(msg.posfrom, msg.posto)
-
-        updated = self.update_probabilities_from_attack(msg)
-
-        if move_type == "win":
-            without_loser = updated.remove_piece(msg.posto)
-            return without_loser.move_piece(msg.posfrom, msg.posto)
-        if move_type == "loss":
-            return updated.remove_piece(msg.posfrom)
-        if move_type == "tie":
-            return updated.remove_piece(msg.posfrom).remove_piece(msg.posto)
-
-    def piece_at(self, position):
-        """
-        Position -> (Piece | None)
-
-        Returns the piece at the given position.
-
-        """
-        return next(
-            (p for p in self.pieces_list if p.position == position), None)
-
     def is_space_blocked_for(self, position, owner):
         """
         Position Owner -> bool
@@ -257,6 +248,32 @@ class Board:
 
         return Board(new_list)
 
+    def update(self, msg):
+        """
+        MoveMessage -> Board
+
+        Move pieces if a "move" or "win" is indicated by the given
+        MoveMessage, otherwise if a "loss" or "tie" is indicated,
+        then remove pieces appropriately.
+
+        """
+        move_type = msg.movetype
+        if move_type == "move":
+            # If a piece moves, it cannot be a landmine
+            piece = self.piece_at(msg.posfrom)
+            updated = self.exclude_ranks(piece, {Rank('L')})
+            return updated.move_piece(msg.posfrom, msg.posto)
+
+        updated = self.update_probabilities_from_attack(msg)
+
+        if move_type == "win":
+            without_loser = updated.remove_piece(msg.posto)
+            return without_loser.move_piece(msg.posfrom, msg.posto)
+        if move_type == "loss":
+            return updated.remove_piece(msg.posfrom)
+        if move_type == "tie":
+            return updated.remove_piece(msg.posfrom).remove_piece(msg.posto)
+
     def set_flag(self, position):
         """
         Position -> Board
@@ -272,24 +289,6 @@ class Board:
 
         piece = self.piece_at(position)
         return self.exclude_ranks(piece, set(piece.ranks()) - {Rank('F')})
-
-    def initialize_opponent_pieces(self):
-        """
-        -> Board
-
-        Adds all of the opponent's pieces to the board in their
-        initial configuration.
-
-        """
-        board = self
-
-        for x in range(0, 5):
-            for y in range(6, 12):
-                (numerators, denominators) = _initial_probability_for((x, y))
-                piece = Piece((x, y), Owner.OPPONENT, numerators, denominators)
-                board = board.place_piece(piece)
-
-        return board
 
     def dump_debug_board(self):
         """
