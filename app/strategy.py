@@ -2,7 +2,6 @@ from app.board import Board, Rank, Owner
 from app.board_layout import *
 
 # Note that we are ONLY considering movable pieces i.e. no landmines or flags
-# TODO May need to consider the case of a movable piece placed in hq?
 RANK_WORTH = {Rank('1'):2, Rank('2'):2, Rank('3'):3, Rank('4'):4, Rank('5'):5, 
 	Rank('6'):6, Rank('7'):7, Rank('8'):8, Rank('9'):9, Rank('B'):5}
 
@@ -10,16 +9,12 @@ RANK_INIT_AMT = {Rank('1'):3, Rank('2'):3, Rank('3'):3, Rank('4'):2,
 	Rank('5'):2, Rank('6'):2, Rank('7'):2, Rank('8'):1, Rank('9'):1, 
 	Rank('B'):2}
 
-# Factors should all up to 1
-# TODO Dictionary: weight to functions 
-# TODO Make 2 dictionaries (player 1 and player 2)
 WORTH_FACTOR = 0.3
-LOSING_PIECE_FACTOR = 0.3
+WINNING_FACTOR = 0.3
 COMMONALITY_FACTOR = 0.05
 PROXIMITY_FACTOR = 0.25
 BRAVE_FACTOR = 0.1
-MOVE_VALUE = -1
-
+MOVE_VALUE = 0
 
 def action_value(board, src, dest):
 	"""
@@ -32,12 +27,12 @@ def action_value(board, src, dest):
 		return MOVE_VALUE
 	else:
 		(win, loss, tie) = prob_win_loss_tie(board, src, dest)
-		value = \
-			WORTH_FACTOR * piece_worth(board, src) + \
-			LOSING_PIECE_FACTOR * (loss + tie) + \
-			COMMONALITY_FACTOR * piece_commonality_rating(board, src) + \
-			PROXIMITY_FACTOR * proximity_rating(board, src, dest) + \
-			BRAVE_FACTOR * brave_rating(board, src) 
+		value = 10000
+			#WORTH_FACTOR * piece_worth(board, src) + \
+			#WINNING_FACTOR * win + \
+			#COMMONALITY_FACTOR * piece_commonality_rating(board, src) + \
+			#PROXIMITY_FACTOR * proximity_rating(board, src, dest) + \
+			#BRAVE_FACTOR * brave_rating(board, src) 
 		return value
 
 def piece_worth(board, pos):
@@ -52,17 +47,6 @@ def piece_worth(board, pos):
 	piece = board.piece_at(pos)
 	rank = piece.get_rank()
 	return (RANK_WORTH[rank] - min) / (max - min)
-
-def prob_win_loss_tie(board, src, dest):
-	"""
-	Board Position Position -> (Number, Number, Number)
-
-	Returns probability of winning, losing and tying
-
-	"""
-	player_piece = board.piece_at(src)
-	opponent_piece = board.piece_at(dest)
-	return player_piece.expected_attack_outcome(opponent_piece)
 
 
 def piece_commonality_rating(board, src):
