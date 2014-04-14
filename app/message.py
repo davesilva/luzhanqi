@@ -64,10 +64,13 @@ def deserialize(packet):
     MoveMessage((0,5) (1,5) 1 "win")
 
     """
+    p = packet.strip()
     for rx in RE_MAP:
-        match = re.search(rx, packet)
+        match = re.search(rx, p)
         if match:
             return RE_MAP[rx](match)
+    if len(p) == 0:
+        return EmptyMessage()
 
     raise BadMessageException("Invalid Message from the Ref: %s" % (packet))
 
@@ -177,6 +180,25 @@ class ForfeitMessage(Message):
 
         """
         return "forfeit"
+
+class EmptyMessage(Message):
+    """
+    Wrapper class for handling empty messages
+    from the ref
+
+    """
+
+    def __init__(self):
+        pass
+
+    def serialize(self):
+        """
+        -> str
+
+        Serialize this EmptyMessage.
+
+        """
+        return "empty"
 
 class MoveMessage(Message):
     """

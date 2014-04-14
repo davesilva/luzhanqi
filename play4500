@@ -125,6 +125,8 @@ def main():
             break
         elif isinstance(msg, message.ErrorMessage):
             exit(-1)
+        elif isinstance(msg, message.EmptyMessage):
+            continue
 
     return 0
 
