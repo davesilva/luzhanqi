@@ -2,6 +2,7 @@ from app.board import Board
 from app.piece import Owner
 from app.rank import Rank
 from app.board_layout import *
+import random
 
 # Note that we are ONLY considering movable pieces i.e. no landmines or flags
 RANK_WORTH = {Rank('1'):2, Rank('2'):2, Rank('3'):3, Rank('4'):4, Rank('5'):5, 
@@ -11,12 +12,13 @@ RANK_INIT_AMT = {Rank('1'):3, Rank('2'):3, Rank('3'):3, Rank('4'):2,
 	Rank('5'):2, Rank('6'):2, Rank('7'):2, Rank('8'):1, Rank('9'):1, 
 	Rank('B'):2}
 
-WORTH_FACTOR = 0.3
-WINNING_FACTOR = 0.3
-COMMONALITY_FACTOR = 0.05
-PROXIMITY_FACTOR = 1.0
-BRAVE_FACTOR = 0.1
-MOVE_VALUE = 0
+WORTH_FACTOR = 3
+WINNING_FACTOR = 3
+COMMONALITY_FACTOR = 1
+PROXIMITY_FACTOR = 2
+BRAVE_FACTOR = 2
+MOVE_VALUE = 2
+RANDOM_FACTOR = 1
 
 def action_value(board, src, dest):
 	"""
@@ -26,16 +28,21 @@ def action_value(board, src, dest):
 
 	"""
 	if board.piece_at(dest) == None:
-		return MOVE_VALUE
+		return PROXIMITY_FACTOR * proximity_rating(board, src, dest)
 	else:
 		(win, loss, tie) = prob_win_loss_tie(board, src, dest)
 		value = \
-			PROXIMITY_FACTOR * proximity_rating(board, src, dest)
-			#WORTH_FACTOR * piece_worth(board, src) + \
-			#WINNING_FACTOR * win + \
-			#COMMONALITY_FACTOR * piece_commonality_rating(board, src) + \
-			#BRAVE_FACTOR * brave_rating(board, src) 
+			PROXIMITY_FACTOR * proximity_rating(board, src, dest) + \
+			WORTH_FACTOR * piece_worth(board, src) + \
+			WINNING_FACTOR * win + \
+			COMMONALITY_FACTOR * piece_commonality_rating(board, src) + \
+			BRAVE_FACTOR * brave_rating(board, src) + \
+      RANDOM_FACTOR * gen_rand()
 		return value
+
+
+def gen_rand():
+  return random.random()
 
 def prob_win_loss_tie(board, src, dest):
 	"""

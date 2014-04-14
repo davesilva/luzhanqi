@@ -125,6 +125,7 @@ def main():
                 io.send(fmsg)
                 exit(10)
             mov_msg = message.MoveMessage(best_move[0], best_move[1])
+            log.debug("Print this every time please")
             log.debug("%d" % (best_move_weight))
             io.send(mov_msg)
 
