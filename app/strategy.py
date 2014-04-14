@@ -37,6 +37,18 @@ def action_value(board, src, dest):
 			#BRAVE_FACTOR * brave_rating(board, src) 
 		return value
 
+def prob_win_loss_tie(board, src, dest):
+	"""
+	Board Position Position -> (Number, Number, Number)
+
+	Returns probability of winning, losing and tying
+
+	"""
+	player_piece = board.piece_at(src)
+	opponent_piece = board.piece_at(dest)
+	return player_piece.expected_attack_outcome(opponent_piece)
+
+
 def piece_worth(board, pos):
 	"""
 	Board Position -> Number
