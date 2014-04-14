@@ -90,13 +90,13 @@ class Board:
     def piece_at(self, position):
         """
         Position -> (Piece | None)
-        
+
         Returns the piece at the given position.
-        
+
         """
         return next(
             (p for p in self.pieces_list if p.position == position), None)
- 
+
     def move_piece(self, src, dest):
         """
         Position Position -> Board
@@ -117,6 +117,7 @@ class Board:
         else:
             raise PieceNotFoundException("Cannot move piece from ( %c%d )"
                                          % (ord('A') + src[0], src[1] + 1))
+
     def remove_piece(self, pos):
         """
         Position -> Board
@@ -133,6 +134,7 @@ class Board:
         else:
             raise PieceNotFoundException("Cannot remove piece from ( %c%d )"
                                          % (ord('A') + pos[0], pos[1] + 1))
+
     def is_space_blocked_for(self, position, owner):
         """
         Position Owner -> bool
@@ -292,10 +294,10 @@ class Board:
 
     def dump_debug_board(self):
         """
-        -> 
-        
+        ->
+
         Logs the current state of the board.
-        
+
         """
         log.debug(" | ".join([str(p) for p in self.pieces_list]))
 
