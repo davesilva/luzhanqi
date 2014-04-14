@@ -56,7 +56,7 @@ def next_best_move():
         src = best_move[0]
         dest = best_move[1]
         best_move_weight = strategy.action_value(game_board, src, dest)
-        log.debug("%d" % (best_move_weight))
+        
 
     except StopIteration:
         forfeit = True
@@ -74,7 +74,6 @@ def next_best_move():
         if weight > best_move_weight:
             best_move = move
             best_move_weight = weight
-            log.debug("%d" % (best_move_weight))
 
 
 def main():
@@ -126,7 +125,9 @@ def main():
                 io.send(fmsg)
                 exit(10)
             mov_msg = message.MoveMessage(best_move[0], best_move[1])
+            log.debug("%d" % (best_move_weight))
             io.send(mov_msg)
+
         elif isinstance(msg, message.FlagMessage):
             game_board = game_board.set_flag(msg.pos)
         elif isinstance(msg, message.WinningMessage):
