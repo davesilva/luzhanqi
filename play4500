@@ -12,6 +12,9 @@ import app.strategy as strategy
 import random
 import threading
 import time
+import logging 
+
+log = logging.getLogger("play4500")
 
 # our first move, a tuple of tuples (from, to)
 FIRST_MOVE = ((2, 1), (3, 2))
@@ -20,7 +23,7 @@ FIRST_MOVE = ((2, 1), (3, 2))
 best_move = None
 
 # weight of the best move
-best_move_weight = 0
+best_move_weight = -1
 
 # Should the thread keep going
 computing = True
@@ -46,12 +49,15 @@ def next_best_move():
     computing = True
     all_moves = game_board.iterate_all_moves(board.Owner.PLAYER)
 
+    best_move_weight = -1
     # Check if we still have moves left, forfeit if not
     try:
         best_move = next(all_moves)
         src = best_move[0]
         dest = best_move[1]
         best_move_weight = strategy.action_value(game_board, src, dest)
+        
+
     except StopIteration:
         forfeit = True
         return
@@ -113,12 +119,16 @@ def main():
             compute_thread.start()
             compute_thread.join((config.time / 1000) - ADJUST)
             computing = False
+
             if(forfeit):
                 fmsg = message.ForfeitMessage()
                 io.send(fmsg)
                 exit(10)
             mov_msg = message.MoveMessage(best_move[0], best_move[1])
+            log.debug("Print this every time please")
+            log.debug("%d" % (best_move_weight))
             io.send(mov_msg)
+
         elif isinstance(msg, message.FlagMessage):
             game_board = game_board.set_flag(msg.pos)
         elif isinstance(msg, message.WinningMessage):
