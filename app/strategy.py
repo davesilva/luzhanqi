@@ -14,7 +14,7 @@ RANK_INIT_AMT = {Rank('1'):3, Rank('2'):3, Rank('3'):3, Rank('4'):2,
 WORTH_FACTOR = 0.3
 WINNING_FACTOR = 0.3
 COMMONALITY_FACTOR = 0.05
-PROXIMITY_FACTOR = 0.25
+PROXIMITY_FACTOR = 1.0
 BRAVE_FACTOR = 0.1
 MOVE_VALUE = 0
 
@@ -29,11 +29,11 @@ def action_value(board, src, dest):
 		return MOVE_VALUE
 	else:
 		(win, loss, tie) = prob_win_loss_tie(board, src, dest)
-		value = 1
+		value = \
 			#WORTH_FACTOR * piece_worth(board, src) + \
 			#WINNING_FACTOR * win + \
 			#COMMONALITY_FACTOR * piece_commonality_rating(board, src) + \
-			#PROXIMITY_FACTOR * proximity_rating(board, src, dest) + \
+			PROXIMITY_FACTOR * proximity_rating(board, src, dest) # + \
 			#BRAVE_FACTOR * brave_rating(board, src) 
 		return value
 
