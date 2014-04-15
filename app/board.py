@@ -242,9 +242,6 @@ class Board:
         for p in self.pieces_list:
             if p == piece:
                 new_list.append(new_piece)
-            # TODO: Adjust probabilities for the other pieces
-            # elif p.owner == piece.owner:
-            #     new_list.append(p.adjust_probabilities(piece, ranks))
             else:
                 new_list.append(p)
 
