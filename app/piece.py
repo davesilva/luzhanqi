@@ -123,48 +123,6 @@ class Piece:
         return Piece(self.position, self.owner,
                      new_numerators, new_denominators)
 
-    def adjust_probabilities(self, piece, excluded_ranks):
-        """
-        set(Rank) -> Piece
-
-        After using exclude_ranks to exclude a set of ranks for a
-        piece, we must adjust the probabilities for every other
-        piece on the board accordingly. This function takes the
-        piece that was changed using exclude_ranks, along with
-        the set of Ranks that were excluded and updates this
-        piece. It should be called for every other piece on the
-        board when using exclude_ranks.
-
-        """
-        excluded_ranks = set(excluded_ranks)
-        ranks_removed = excluded_ranks.difference(set(self.ranks()))
-        ranks_kept = excluded_ranks.intersection(set(self.ranks()))
-        new_numerators = {}
-        new_denominators = {}
-
-        soldier_denominator_diff = 0
-        for rank in ranks_kept:
-            if rank in SOLDIER_RANKS:
-                soldier_denominator_diff = \
-                    soldier_denominator_diff + piece.probability(rank)
-
-        for rank in ranks_removed:
-            new_numerators[rank] = self.prob_numerators[rank]
-            new_denominators[rank] = self.prob_denominators[rank] - 1
-
-        for rank in ranks_kept:
-            new_numerators[rank] = \
-                self.prob_numerators[rank] - piece.probability(rank)
-            if rank in SOLDIER_RANKS:
-                new_denominators[rank] = \
-                    self.prob_denominators[rank] - soldier_denominator_diff
-            else:
-                new_denominators[rank] = \
-                    self.prob_denominators[rank] - piece.probability(rank)
-
-        return Piece(self.position, self.owner,
-                     new_numerators, new_denominators)
-
     def probability(self, rank):
         """
         Rank -> Fraction
