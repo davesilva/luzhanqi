@@ -13,14 +13,14 @@ RANK_INIT_AMT = {Rank('1'): 3, Rank('2'): 3, Rank('3'): 3, Rank('4'): 2,
                  Rank('5'): 2, Rank('6'): 2, Rank('7'): 2, Rank('8'): 1,
                  Rank('9'): 1, Rank('B'): 2}
 
-WORTH_FACTOR = 3
-WINNING_FACTOR = 3
-COMMONALITY_FACTOR = 1
-BRAVE_FACTOR = 2
+WORTH_FACTOR = 1
+WINNING_FACTOR = 10
+COMMONALITY_FACTOR = 0
+BRAVE_FACTOR = 10
 
-PROXIMITY_FACTOR = 2
+PROXIMITY_FACTOR = 5
 RANDOM_FACTOR = 1
-MOVE_VALUE = 8
+MOVE_VALUE = 4
 
 
 def action_value(board, src, dest):

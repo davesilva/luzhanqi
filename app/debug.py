@@ -1,6 +1,6 @@
 import logging
 
-DEBUGGING = True
+DEBUGGING = False
 
 
 def assert_all_probabilities_sum_to_one(board):
